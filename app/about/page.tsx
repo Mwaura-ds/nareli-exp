@@ -40,7 +40,7 @@ export default function AboutPage() {
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">Our Story</h1>
           <p className="text-xl text-stone-600 leading-relaxed">
-            Nareli Experience was born out of a simple belief: everyone deserves to celebrate life's beautiful moments without the stress of planning them.
+           Nareli is an event and experience company focused on creating unique, exciting and unforgettable experiences that bring people together through creativity, entertainment and innovation.
           </p>
         </motion.div>
       </section>
@@ -102,7 +102,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Email Us</h3>
               <p className="text-stone-400 text-sm mb-2">For bookings & inquiries</p>
-              <a href="mailto:hello@nareliexperience.com" className="text-white font-medium hover:underline">hello@nareliexperience.com</a>
+              <a href="mailto:narelieventske@gmail.com" className="text-white font-medium hover:underline">narelieventske@gmail.com</a>
             </motion.div>
 
             <motion.div variants={item} className="bg-stone-800 p-8 rounded-2xl hover:bg-stone-700 transition-colors">
@@ -111,7 +111,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Call / WhatsApp</h3>
               <p className="text-stone-400 text-sm mb-2">Mon - Sat, 9am - 6pm</p>
-              <a href="tel:+1234567890" className="text-white font-medium hover:underline">+1 (234) 567-890</a>
+              <a href="tel:+254719860633" className="text-white font-medium hover:underline">+254719860633</a>
             </motion.div>
 
             <motion.div variants={item} className="bg-stone-800 p-8 rounded-2xl hover:bg-stone-700 transition-colors">
@@ -121,7 +121,7 @@ export default function AboutPage() {
               <h3 className="text-xl font-bold mb-2">Follow Us</h3>
               <p className="text-stone-400 text-sm mb-2">See our latest setups</p>
               <div className="flex justify-center gap-4 text-white font-medium">
-                <a href="#" className="hover:text-amber-400 transition-colors">Instagram</a>
+                <a href="https://www.instagram.com/nareliexperience?dlrf=MWpweDNhemJwd3hjNw==" className="hover:text-amber-400 transition-colors">Instagram</a>
                 <span className="text-stone-600">|</span>
                 <a href="#" className="hover:text-amber-400 transition-colors">TikTok</a>
               </div>
