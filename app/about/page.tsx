@@ -56,7 +56,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           
           {/* THE AUTOMATIC SLIDESHOW */}
-          <motion.div variants={item} className="relative h-[400px] rounded-3xl shadow-lg overflow-hidden bg-stone-200">
+          <motion.div variants={item} className="relative h-100 rounded-3xl shadow-lg overflow-hidden bg-stone-200">
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex} // The key tells Framer Motion to animate when this changes
