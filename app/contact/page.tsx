@@ -26,7 +26,7 @@ export default function ContactPage() {
       });
 
       if (response.ok) {
-        setIsSuccess(true); // Hii ndiyo inayoonyesha picha!
+        setIsSuccess(true);
         (e.target as HTMLFormElement).reset();
       } else {
         alert('Something went wrong. Please try again.');
@@ -42,7 +42,6 @@ export default function ContactPage() {
     <main className="min-h-screen bg-stone-50 py-20 px-6 flex items-center justify-center">
       <div className="max-w-2xl w-full bg-white p-10 rounded-3xl shadow-sm border border-stone-100 min-h-[500px] flex flex-col justify-center">
         
-        {/* Hii ndiyo sehemu ya picha inayoonekana baada ya kutuma */}
         {isSuccess ? (
           <div className="text-center py-10 flex flex-col items-center justify-center h-full">
             <img 
@@ -62,7 +61,6 @@ export default function ContactPage() {
             </button>
           </div>
         ) : (
-          /* Hii ni fomu ya kawaida */
           <div>
             <h1 className="text-4xl font-bold text-center mb-4 text-stone-900">Let's Plan Your Event</h1>
             <p className="text-center text-stone-600 mb-10">Fill out the form below and we'll get back to you within 24 hours.</p>
