@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     // Send the email
     const data = await resend.emails.send({
       from: 'Nareli Experience <onboarding@resend.dev>', 
-      to: ['mwaurawambui2004@gmail.com'], 
+      to: ['narelieventske@gmail.com'], 
       subject: `New Event Inquiry: ${eventType}`,
       html: `
         <h2>New Booking Inquiry</h2>
