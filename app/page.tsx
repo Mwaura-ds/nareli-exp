@@ -1,32 +1,34 @@
 "use client";
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { apiConfigured, apiFetch } from './lib/api';
+
+type ApiEvent = {
+  id: string;
+  title: string;
+  location: string | null;
+  start_time: string;
+  end_time: string;
+  capacity: number | null;
+  current_registrations: number;
+};
 
 export default function Home() {
-  const upcomingEvents = [
-    { 
-      date: "Sat, Nov 14", 
-      title: "Sunset Cinema Under the Stars", 
-      location: "Riverside Park, Downtown", 
-      price: "$35 / person",
-      status: "Few spots left"
-    },
-    { 
-      date: "Fri, Nov 21", 
-      title: "Boho Luxury Picnic Pop-Up", 
-      location: "The Botanical Gardens", 
-      price: "$50 / couple",
-      status: "Selling fast"
-    },
-    { 
-      date: "Sat, Dec 05", 
-      title: "Winter Cozy Sleepover Experience", 
-      location: "Secret Location (Revealed upon RSVP)", 
-      price: "$65 / person",
-      status: "Waitlist open"
-    },
-  ];
+  const [events, setEvents] = useState<ApiEvent[] | null>(() => (apiConfigured ? null : []));
+  const [eventsError, setEventsError] = useState(() => !apiConfigured);
+
+  useEffect(() => {
+    if (!apiConfigured) return;
+    apiFetch('/api/events?status=upcoming&per_page=6')
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`events: ${r.status}`);
+        return r.json();
+      })
+      .then((d) => setEvents(d.data ?? []))
+      .catch(() => setEventsError(true));
+  }, []);
 
   const privateExperiences = [
     { 
@@ -121,27 +123,45 @@ export default function Home() {
         </div>
         
         <div className="space-y-6">
-          {upcomingEvents.map((event, index) => (
-            <motion.div key={index} variants={item} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-stone-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:shadow-md transition-shadow">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full">{event.date}</span>
-                  <span className="text-amber-700 text-sm font-medium">{event.status}</span>
+          {events === null && (
+            <p className="text-center text-stone-500 py-12">Loading events…</p>
+          )}
+          {events !== null && eventsError && (
+            <p className="text-center text-stone-500 py-12">Events will be live soon — <Link href="/contact" className="underline">write to us</Link> about any of them.</p>
+          )}
+          {events !== null && !eventsError && events.length === 0 && (
+            <div className="text-center py-16 border border-dashed border-stone-300 rounded-2xl px-6">
+              <h3 className="text-2xl font-bold text-stone-900 mb-2">More moments in the making</h3>
+              <p className="text-stone-600 max-w-md mx-auto">Our next curated experiences are being set up. Follow us for the reveal, or ask us about a private booking below.</p>
+            </div>
+          )}
+          {events?.map((event) => {
+            const seatsLeft = event.capacity == null ? null : Math.max(0, event.capacity - event.current_registrations);
+            const soldOut = seatsLeft === 0;
+            const dateLabel = new Intl.DateTimeFormat('en-KE', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Africa/Nairobi' }).format(new Date(event.start_time));
+            return (
+              <motion.div key={event.id} variants={item} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-stone-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:shadow-md transition-shadow">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full">{dateLabel}</span>
+                    {soldOut && <span className="text-red-700 text-sm font-medium">Sold out — waitlist open</span>}
+                    {!soldOut && seatsLeft !== null && seatsLeft <= 10 && <span className="text-amber-700 text-sm font-medium">Only {seatsLeft} seats left</span>}
+                  </div>
+                  <h3 className="text-2xl font-bold text-stone-900 mb-1">{event.title}</h3>
+                  <p className="text-stone-600 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    {event.location ?? 'Venue revealed after RSVP'}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-stone-900 mb-1">{event.title}</h3>
-                <p className="text-stone-600 flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  {event.location}
-                </p>
-              </div>
-              <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
-                <p className="text-xl font-bold text-stone-900">{event.price}</p>
-                <button className="bg-stone-900 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition-colors w-full md:w-auto">
-                  RSVP / Get Tickets
-                </button>
-              </div>
-            </motion.div>
-          ))}
+                <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
+                  <p className="text-xs uppercase tracking-widest text-stone-500">KSh</p>
+                  <Link href={`/events/${event.id}`} className="bg-stone-900 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition-colors w-full md:w-auto text-center">
+                    {soldOut ? 'Join Waitlist' : 'Reserve'}
+                  </Link>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.section>
 
