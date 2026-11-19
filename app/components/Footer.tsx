@@ -8,7 +8,9 @@ export default function Footer() {
         <p className="mb-6">Curating unforgettable moments, one event at a time.</p>
         <nav className="flex gap-6 justify-center text-sm mb-6">
           <Link href="/" className="hover:text-white">Home</Link>
+          <Link href="/events" className="hover:text-white">Events</Link>
           <Link href="/experiences" className="hover:text-white">Packages</Link>
+          <Link href="/notifications" className="hover:text-white">My messages</Link>
           <Link href="/contact" className="hover:text-white">Contact</Link>
           <Link href="/terms" className="hover:text-white">Privacy &amp; Refunds</Link>
         </nav>

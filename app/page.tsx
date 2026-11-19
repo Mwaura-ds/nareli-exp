@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { apiConfigured, apiFetch } from './lib/api';
+import Todo from './components/Todo';
 
 type ApiEvent = {
   id: string;
@@ -120,6 +121,9 @@ export default function Home() {
           <span className="text-stone-500 font-medium tracking-widest uppercase text-sm">Join the Vibe</span>
           <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">Upcoming Events</h2>
           <p className="text-stone-600 text-lg max-w-2xl mx-auto">Secure your spot at our next curated experience.</p>
+          <Link href="/events" className="inline-block mt-3 text-sm font-semibold text-stone-700 underline underline-offset-4 hover:text-stone-900">
+            See all events →
+          </Link>
         </div>
         
         <div className="space-y-6">
@@ -154,7 +158,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
-                  <p className="text-xs uppercase tracking-widest text-stone-500">KSh</p>
+                  <p className="text-xs uppercase tracking-widest text-stone-500">KSh <Todo>owner: prices + payments</Todo></p>
                   <Link href={`/events/${event.id}`} className="bg-stone-900 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition-colors w-full md:w-auto text-center">
                     {soldOut ? 'Join Waitlist' : 'Reserve'}
                   </Link>
