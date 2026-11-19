@@ -28,10 +28,20 @@ Audience: the owner (Mwaura) and technical staff connecting the Next.js site to 
 
 | | Location | Stack | State (2026-11-16) |
 |---|---|---|---|
-| **Backend** | `~/Projects/event-backend` (this device) | Node 20+ ESM, Express 4, Drizzle ORM, PostgreSQL 16, zod | 65 tests green; NOT a public repo; needs private handover |
+| **Backend** | `~/Projects/event-backend` → private repo `Phantomojo/event-backend` | Node 20+ ESM, Express 4, Drizzle ORM, PostgreSQL 16, zod | 70 tests green; private handover pending settlement |
 | **Frontend** | this repo (`github.com/Mwaura-ds/nareli-exp`) | Next.js 16.4.5 (Cache Components), React 19, Tailwind 4, pnpm | builds green after local fixes; local working-tree changes UNcommitted — see §9 |
 
-**How to get the backend code:** zip it yourself from this device, or push it to a **private** repo you own, then pull wherever the backend will live. **Never a public repo** — it contains no secrets, but it's your business logic and there's no reason to expose it.
+**How to get the backend code:** it is now in a **private** repository, `github.com/Phantomojo/event-backend` (created 2026-11-19, `isPrivate: true`, 42 files, 70 green tests). Transfer or grant access as part of the commercial handover. **Never a public repo** — it contains no secrets, but it's your business logic and there's no reason to expose it.
+
+### 2.1 Frontend pages wired to the backend (as of 2026-11-20)
+
+- `/events` — public listing with status tabs, location filter and pagination (`GET /api/events`).
+- `/events/[id]` — booking with consent, party names, on-screen QR from the check-in token.
+- `/notifications` — account inbox (`GET /api/notifications`); customer token is tab-scoped.
+- `/gate` — staff door console (phone lookup + per-name arrivals); staff token stays in memory only. **Never linked publicly.**
+- `/owner` — **owner-only, never linked publicly.** Creates/edits/cancels events, shows the summary dashboard, lists registrations with CSV export and refund ledger actions, and manages gate staff. Staff tokens are rejected by the DB-fresh role check.
+
+Refund buttons in `/owner` record ledger state only; the actual money movement is out-of-band until payments are wired. The owner-console contract was smoke-tested with 15 live API calls against a disposable PostgreSQL 16 backend.
 
 ---
 
