@@ -100,7 +100,7 @@ export async function getNotifications(token: string, page = 1) {
 // ---- Owner / admin surface (never available to staff tokens) ----
 export type StaffMember = { id: string; email: string; username: string | null; created_at: string };
 export type RegistrationRow = {
-  id: string; email: string | null; username: string | null; phone: string | null;
+  id: string; user_id: string; email: string | null; username: string | null; phone: string | null;
   party_size: number; status: string; arrived_count: number; arrived_names: string[];
   amount_kes: number | null; payment_ref: string | null; refund_status: string;
   refunded_kes: number | null; refund_ref: string | null; registered_at: string; checkin_at: string | null;
@@ -163,6 +163,19 @@ export async function createEvent(token: string, body: {
 export async function editCapacity(token: string, eventId: string, capacity: number | null) {
   return apiJson<ApiEvent>(`/api/events/${eventId}`, {
     method: 'PUT', headers: authHeaders(token), body: JSON.stringify({ capacity }),
+  });
+}
+export async function editEvent(token: string, eventId: string, body: {
+  title?: string; description?: string; location?: string;
+  start_time?: string; end_time?: string; capacity?: number | null; is_public?: boolean;
+}) {
+  return apiJson<ApiEvent>(`/api/events/${eventId}`, {
+    method: 'PUT', headers: authHeaders(token), body: JSON.stringify(body),
+  });
+}
+export async function cancelRegistration(token: string, eventId: string, userId: string) {
+  return apiJson<{ status: string }>(`/api/events/${eventId}/cancel`, {
+    method: 'POST', headers: authHeaders(token), body: JSON.stringify({ user_id: userId }),
   });
 }
 export async function getStaff(token: string) {

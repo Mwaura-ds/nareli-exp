@@ -6,9 +6,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import {
-  ApiError, apiConfigured, authenticate, cancelEvent, createEvent, createStaff,
-  deleteStaff, downloadRegistrationsCsv, editCapacity, getMe, getOwnerEvents,
-  getRegistrations, getStaff, getSummary, markRefund,
+  ApiError, apiConfigured, authenticate, cancelEvent, cancelRegistration, createEvent,
+  createStaff, deleteStaff, downloadRegistrationsCsv, editCapacity, editEvent,
+  getMe, getOwnerEvents, getRegistrations, getStaff, getSummary, markRefund,
   type ApiEvent, type EventSummary, type RegistrationRow, type StaffMember,
 } from '../lib/api';
 import Todo from '../components/Todo';
@@ -53,6 +53,12 @@ export default function OwnerPage() {
   const [staffEmail, setStaffEmail] = useState('');
   const [staffPassword, setStaffPassword] = useState('');
   const [staffName, setStaffName] = useState('');
+  const [editId, setEditId] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editStart, setEditStart] = useState('');
+  const [editEnd, setEditEnd] = useState('');
 
   const fail = (e: unknown) => setMessage(e instanceof ApiError ? `${e.status}: ${e.message}` : e instanceof Error ? e.message : 'Something went wrong.');
 
@@ -69,6 +75,15 @@ export default function OwnerPage() {
     setRegPage(page);
   };
   const loadStaff = async (t: string) => setStaff((await getStaff(t)).data ?? []);
+
+  const openEdit = (ev: OwnerEvent) => {
+    setEditId(ev.id);
+    setEditTitle(ev.title);
+    setEditDescription(ev.description ?? '');
+    setEditLocation(ev.location ?? '');
+    setEditStart(new Date(ev.start_time).toISOString().slice(0, 16));
+    setEditEnd(new Date(ev.end_time).toISOString().slice(0, 16));
+  };
 
   const signIn = async () => {
     setAuthError(null);
@@ -198,6 +213,7 @@ export default function OwnerPage() {
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">
                     <button onClick={() => { setSelectedId(ev.id); void run(async () => { await loadRegs(token, ev.id); setTab('registrations'); }, 'Loaded event data.'); }} className={ghost}>Registrations / summary</button>
+                    <button onClick={() => (editId === ev.id ? setEditId('') : openEdit(ev))} className={ghost}>{editId === ev.id ? 'Close editor' : 'Edit details'}</button>
                     <input
                       className={`${input} w-28`} type="number" min="0" placeholder="Capacity"
                       value={capacityDrafts[ev.id] ?? String(ev.capacity ?? '')}
@@ -221,6 +237,27 @@ export default function OwnerPage() {
                       }} className="border border-red-300 text-red-700 px-4 py-2 rounded-full text-sm font-medium hover:border-red-500">Cancel event</button>
                     )}
                   </div>
+                  {editId === ev.id && (
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      void run(async () => {
+                        await editEvent(token, ev.id, {
+                          title: editTitle.trim(), description: editDescription.trim(), location: editLocation.trim(),
+                          start_time: new Date(editStart).toISOString(), end_time: new Date(editEnd).toISOString(),
+                          is_public: ev.is_public,
+                        });
+                        await loadEvents(token);
+                        setEditId('');
+                      }, 'Event details updated.');
+                    }} className="grid sm:grid-cols-2 gap-3 border-t border-stone-100 pt-4">
+                      <input className={input} value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="Title" required aria-label="Edit title" />
+                      <input className={input} value={editLocation} onChange={(e) => setEditLocation(e.target.value)} placeholder="Location" aria-label="Edit location" />
+                      <input className={input} type="datetime-local" value={editStart} onChange={(e) => setEditStart(e.target.value)} aria-label="Edit start time" />
+                      <input className={input} type="datetime-local" value={editEnd} onChange={(e) => setEditEnd(e.target.value)} aria-label="Edit end time" />
+                      <textarea className={`${input} sm:col-span-2`} rows={2} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="Description" aria-label="Edit description" />
+                      <button className={`${btn} justify-self-start sm:col-span-2`} disabled={busy}>Save details</button>
+                    </form>
+                  )}
                 </article>
               ))}
             </section>
@@ -287,8 +324,17 @@ export default function OwnerPage() {
                               )}
                             </div>
                           ) : <span className="text-stone-500">closed</span>}
-                        </td>
-                      </tr>
+                          {r.status !== 'cancelled' && (
+                            <button disabled={busy || !selectedId} onClick={() => {
+                              if (!window.confirm(`Cancel the booking for ${r.username ?? r.email ?? r.id.slice(0, 8)}? This notifies them and may trigger a refund request.`)) return;
+                              void run(async () => {
+                                await cancelRegistration(token, selectedId, r.user_id);
+                                await loadRegs(token, selectedId, regPage);
+                              }, 'Booking cancelled on behalf of the attendee.');
+                            }} className="text-red-700 text-xs underline mt-1 block">Cancel booking</button>
+                          )}
+                          </td>
+                          </tr>
                     ))}
                   </tbody>
                 </table>
