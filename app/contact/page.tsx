@@ -51,7 +51,7 @@ export default function ContactPage() {
             />
             <h2 className="text-3xl font-bold text-stone-900 mb-4">Cheers! 🥂</h2>
             <p className="text-stone-600 text-lg mb-8 max-w-md">
-              We have received your inquiry. We'll be in touch shortly to start planning your magical event.
+              We have received your inquiry. We&apos;ll be in touch shortly to start planning your magical event.
             </p>
             <button 
               onClick={() => setIsSuccess(false)} 
@@ -62,8 +62,8 @@ export default function ContactPage() {
           </div>
         ) : (
           <div>
-            <h1 className="text-4xl font-bold text-center mb-4 text-stone-900">Let's Plan Your Event</h1>
-            <p className="text-center text-stone-600 mb-10">Fill out the form below and we'll get back to you within 24 hours.</p>
+            <h1 className="text-4xl font-bold text-center mb-4 text-stone-900">Let&apos;s Plan Your Event</h1>
+            <p className="text-center text-stone-600 mb-10">Fill out the form below and we&apos;ll get back to you within 24 hours.</p>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
