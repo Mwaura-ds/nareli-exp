@@ -97,6 +97,23 @@ export async function getNotifications(token: string, page = 1) {
   });
 }
 
+// ---- Customer self-service tickets ----
+export type MyRegistration = {
+  id: string; event_id: string; status: string; party_size: number | null;
+  attendee_names: string[] | null; ticket_phone: string | null; checkin_at: string | null;
+  refund_status: string; registered_at: string;
+};
+export async function getMyRegistration(token: string, eventId: string) {
+  return apiJson<{ registration: MyRegistration; checkin_token: string | null }>(
+    `/api/events/${eventId}/my-registration`, { headers: authHeaders(token) },
+  );
+}
+export async function cancelMyRegistration(token: string, eventId: string) {
+  return apiJson<{ status: string }>(`/api/events/${eventId}/cancel`, {
+    method: 'POST', headers: authHeaders(token), body: JSON.stringify({}),
+  });
+}
+
 // Customer sessions live in sessionStorage (tab-scoped, gone on close).
 // Staff/door tokens deliberately stay in component memory only — see /gate.
 const TOKEN_KEY = 'nareli_session_token';
