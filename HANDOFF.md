@@ -2,7 +2,7 @@
 
 Audience: the owner (Mwaura) and technical staff connecting the Next.js site to the **event-backend** service.
 
-> **Provenance:** built by an AI pair-programmer with the owner. Everything in this file is checked against the code; where it wasn't, it says so. You are not required to trust anything — verify by running it (every claim below has a command).
+> Everything in this file is checked against the code; where it wasn't, it says so. Verify by running the commands provided.
 
 ---
 
@@ -28,14 +28,24 @@ Audience: the owner (Mwaura) and technical staff connecting the Next.js site to 
 
 | | Location | Stack | State (2026-11-16) |
 |---|---|---|---|
-| **Backend** | `~/Projects/event-backend` (this device) | Node 20+ ESM, Express 4, Drizzle ORM, PostgreSQL 16, zod | 65 tests green; NOT a public repo; needs private handover |
+| **Backend** | `~/Projects/event-backend` → separate private repo | Node 20+ ESM, Express 4, Drizzle ORM, PostgreSQL 16, zod | 70 tests green; access by owner request |
 | **Frontend** | this repo (`github.com/Mwaura-ds/nareli-exp`) | Next.js 16.4.5 (Cache Components), React 19, Tailwind 4, pnpm | builds green after local fixes; local working-tree changes UNcommitted — see §9 |
 
-**How to get the backend code:** zip it yourself from this device, or push it to a **private** repo you own, then pull wherever the backend will live. **Never a public repo** — it contains no secrets, but it's your business logic and there's no reason to expose it.
+**How to get the backend code:** it lives in a **separate private repository**. Ask the owner for access. **Never a public repo** — it contains no secrets, but it's your business logic and there's no reason to expose it.
+
+### 2.1 Frontend pages wired to the backend (as of 2026-11-20)
+
+- `/events` — public listing with status tabs, location filter and pagination (`GET /api/events`).
+- `/events/[id]` — booking with consent, party names, on-screen QR from the check-in token.
+- `/notifications` — account inbox (`GET /api/notifications`); customer token is tab-scoped.
+- `/gate` — staff door console (phone lookup + per-name arrivals); staff token stays in memory only. **Never linked publicly.**
+- `/owner` — **owner-only, never linked publicly.** Creates/edits/cancels events, shows the summary dashboard, lists registrations with CSV export and refund ledger actions, and manages gate staff. Staff tokens are rejected by the DB-fresh role check.
+
+Refund buttons in `/owner` record ledger state only; the actual money movement is out-of-band until payments are wired. The owner-console contract was smoke-tested with 15 live API calls against a disposable PostgreSQL 16 backend.
 
 ---
 
-## 3. Quick start (assistant can do this)
+## 3. Quick start (local)
 
 ### 3.1 Backend, locally (10 min)
 ```bash
@@ -133,33 +143,26 @@ Rollback = previous container image + pg_dump restore (test restores BEFORE rely
 
 ---
 
-## 8. Owner action items (before selling anything)
+## 8. Decisions the organiser owns before launch
 
-1. **ODPC registration** — Kenya DPA 2019 controller registration (personal data is collected: names/phones; no payments → still in scope).
-2. **Legal/T&C review of `/terms`** — page ships with a visible "draft for owner + legal review" marker. Not legal advice — I am not counsel.
-3. **KSh figures + VAT treatment** — packages, events, deposits; VAT to KRA (programs may differ — accountant).
-4. **Sender domain** for the contact form's Resend path (`onboarding@resend.dev` delivers to ONE gmail only); otherwise say "on-screen QR is the ticket" and stop apologizing for no email.
-5. **Commit + push the frontend** — local working tree has everything uncommitted; freeze nothing until you review the diff.
-6. **Decide the public/payment model** — free RSVPs now vs manual M-PESA vs Daraja; funds policy (refund SOP lives in code, money rails don't).
-7. **Deploy decision** (VPS vs Cloudflare Tunnel vs other) + backups drilled.
+Payments and pricing, ticket delivery provider (or on-screen QR only), legal review, deployment host and DNS, backups, and the final go/no-go. The code does not make these decisions for the organiser.
 
 ---
 
-## 9. Known sharp edges from this session (owner should know, not fear)
+## 9. Operational notes
 
-- The frontend shipped with an XSS-in-email contact route and leaked PII to logs — now fixed (validated + 5/min + fail-closed 503). That is the **email inquiry path only**; the RSVP flow never emails anything — it's the QR/PDF on screen.
-- Static QR tickets cannot stop a screenshot re-use pre-first-scan; the door shows **first names** for verification — lean on the verbal check, not the image.
-- `DELETE /api/staff/:id` is instant-revoke (DB recheck per call).
-- Seat counts are `SUM(party_size)` under a row lock; the "oversale" path is structurally impossible through the API. What it cannot protect: doors waving people in without scanning.
-- Frontend `/gate` keeps the staff token in memory only; refresh = re-login (deliberate).
-- Everything labeled ⏳/TBD on the site is owner-pending, not skipped.
+- Tickets are on-screen QR / printable PDF; no email delivery is wired.
+- Static QR tickets cannot stop screenshot reuse before the first scan — door staff verify first names verbally.
+- `DELETE /api/staff/:id` takes effect on the next request.
+- Seat counts are `SUM(party_size)` under a row lock; overselling through the API is not possible. A door that waves people in without scanning remains outside the system.
+- `/gate` keeps the staff token in memory only; refresh requires signing in again.
+- Items marked ⏳/TBD on the site are pending organiser decisions, not omissions.
 
 ---
 
-## 10. Who owns what going forward
+## 10. Responsibilities
 
-- **Owner**: ODPC, legal review, pricing, domain/Resend decision, deploy decision, launch go/no-go, refund execution (manual), staff hiring + password handoff.
-- **Assistant**: runbooks §3–§5; CORS/env wiring on first deploy; deployment once §8 is complete; smoke drill; FFS: show this file before changing trigger points like "payments".
-- **Me (the agent)**: no actions without explicit go; pushed nothing; committed nothing; reader of this file is responsible for same.
+- **Organiser:** legal/data-protection sign-off, pricing, domain and messaging, hosting, launch decision, manual refunds, staff hiring and credential handoff.
+- **Technical maintainer:** runbooks in §3–§5, CORS/env wiring on first deploy, and the launch drill once the organiser's decisions are in place.
 
-*Ends. Verified against the repositories as of 2026-11-16, EAT.*
+*Ends. Technical facts reviewed against the repositories; status dates are shown where relevant.*

@@ -22,7 +22,7 @@ export default function TermsPage() {
         <h2>Privacy notice</h2>
         <p>
           <strong>Who we are.</strong> Nareli Experience (the “organiser”, “we”, “us”). Contact: narelieventske@gmail.com.
-          We operate as a data controller under the Kenya Data Protection Act 2019 and registered where required with the ODPC.
+          We operate as a data controller under the Kenya Data Protection Act 2019.
         </p>
         <p>
           <strong>What we collect.</strong> Your name, phone number, and the first names you give us for your party,
