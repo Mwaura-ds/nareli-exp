@@ -26,6 +26,7 @@ const fmtDate = (s: string) => new Intl.DateTimeFormat('en-KE', {
 
 export default function OwnerPage() {
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -92,11 +93,15 @@ export default function OwnerPage() {
       const res = await authenticate('login', email, password);
       const me = await getMe(res.token); // DB-fresh role: a revoked admin dies here
       const role = me.user.role;
-      if (role !== 'admin' && role !== 'owner') {
-        setAuthError('This account is not an owner. Door staff sign in at /gate.');
+      const allowed = ['admin', 'owner', 'finance', 'content'];
+      if (!allowed.includes(role)) {
+        setAuthError('This account has no management access. Door staff sign in at /gate.');
         return;
       }
       setToken(res.token);
+      setRole(role);
+      if (role === 'finance') setTab('registrations');
+      if (role === 'content') setTab('events');
       await loadEvents(res.token);
       setMessage(`Signed in as ${me.user.username ?? role}.`);
     } catch (e) {
@@ -145,6 +150,11 @@ export default function OwnerPage() {
     );
   }
 
+  const canEvents = role === 'owner' || role === 'admin' || role === 'content';
+  const canFinance = role === 'owner' || role === 'admin' || role === 'finance';
+  const canStaff = role === 'owner' || role === 'admin';
+  const canCancel = role === 'owner' || role === 'admin';
+
   return (
     <main className="min-h-screen bg-stone-50 py-10 px-5">
       <div className="max-w-6xl mx-auto">
@@ -153,18 +163,20 @@ export default function OwnerPage() {
             <h1 className="text-3xl font-bold text-stone-900">Owner console</h1>
             <p className="text-stone-600 text-sm">Live backend data — every action is permission-checked again on the server.</p>
           </div>
-          <button onClick={() => { setToken(null); setEvents([]); setSummary(null); setRegs([]); setStaff([]); }} className={ghost}>Sign out</button>
+          <button onClick={() => { setToken(null); setRole(null); setEvents([]); setSummary(null); setRegs([]); setStaff([]); }} className={ghost}>Sign out</button>
         </div>
 
         <nav className="flex gap-2 mb-6">
-          {([['events', 'Events'], ['registrations', 'Registrations + refunds'], ['staff', 'Gate staff']] as [Tab, string][]).map(([key, label]) => (
+          {([['events', 'Events'], ['registrations', 'Registrations + refunds'], ['staff', 'Gate staff']] as [Tab, string][])
+            .filter(([key]) => (key === 'events' ? canEvents : key === 'registrations' ? canFinance : canStaff))
+            .map(([key, label]) => (
             <button key={key} onClick={() => void switchTab(key)} className={`px-4 py-2 rounded-full border text-sm font-medium ${tab === key ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'}`}>{label}</button>
           ))}
         </nav>
 
         {message && <div className="bg-stone-900 text-white rounded-2xl px-5 py-3 text-sm mb-5">{message}</div>}
 
-        {tab === 'events' && (
+        {tab === 'events' && canEvents && (
           <div className="space-y-8">
             <section className="bg-white rounded-3xl border border-stone-100 shadow-sm p-6">
               <h2 className="text-xl font-bold text-stone-900 mb-1">Create an event</h2>
@@ -225,7 +237,7 @@ export default function OwnerPage() {
                       await editCapacity(token, ev.id, raw.trim() === '' ? null : Number(raw));
                       await loadEvents(token);
                     }, 'Capacity updated (cannot go below seats already sold).')} className={ghost} disabled={busy}>Save capacity</button>
-                    {!ev.cancelled_at && (
+                    {!ev.cancelled_at && canCancel && (
                       <button onClick={() => {
                         if (!window.confirm(`Cancel “${ev.title}” for everyone? This notifies attendees and flags paid bookings for refund.`)) return;
                         const reason = window.prompt('Reason shown to attendees (optional):') ?? '';
@@ -264,7 +276,7 @@ export default function OwnerPage() {
           </div>
         )}
 
-        {tab === 'registrations' && (
+        {tab === 'registrations' && canFinance && (
           <div className="space-y-6">
             <section className="bg-white rounded-3xl border border-stone-100 shadow-sm p-5 flex flex-wrap gap-3 items-center">
               <select className={input} value={selectedId} onChange={(e) => { setSelectedId(e.target.value); setSummary(null); setRegs([]); }} aria-label="Choose event">
@@ -351,7 +363,7 @@ export default function OwnerPage() {
           </div>
         )}
 
-        {tab === 'staff' && (
+        {tab === 'staff' && canStaff && (
           <div className="space-y-6">
             <section className="bg-white rounded-3xl border border-stone-100 shadow-sm p-6">
               <h2 className="text-xl font-bold text-stone-900 mb-3">Add gate staff</h2>
