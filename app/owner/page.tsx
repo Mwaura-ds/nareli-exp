@@ -9,12 +9,13 @@ import {
   ApiError, apiConfigured, authenticate, cancelEvent, cancelRegistration, createEvent,
   createStaff, deleteStaff, downloadRegistrationsCsv, editCapacity, editEvent,
   getMe, getOwnerEvents, getRegistrations, getStaff, getSummary, markRefund,
+  provisionAccount,
   type ApiEvent, type EventSummary, type RegistrationRow, type StaffMember,
 } from '../lib/api';
 import Todo from '../components/Todo';
 
 type OwnerEvent = ApiEvent & { is_public: boolean; cancelled_at?: string | null };
-type Tab = 'events' | 'registrations' | 'staff';
+type Tab = 'events' | 'registrations' | 'staff' | 'accounts';
 
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
 const btn = 'bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-700 disabled:opacity-50';
@@ -54,6 +55,10 @@ export default function OwnerPage() {
   const [staffEmail, setStaffEmail] = useState('');
   const [staffPassword, setStaffPassword] = useState('');
   const [staffName, setStaffName] = useState('');
+  const [accountEmail, setAccountEmail] = useState('');
+  const [accountPassword, setAccountPassword] = useState('');
+  const [accountName, setAccountName] = useState('');
+  const [accountRole, setAccountRole] = useState<'admin' | 'owner' | 'finance' | 'content'>('admin');
   const [editId, setEditId] = useState('');
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -154,6 +159,7 @@ export default function OwnerPage() {
   const canFinance = role === 'owner' || role === 'admin' || role === 'finance';
   const canStaff = role === 'owner' || role === 'admin';
   const canCancel = role === 'owner' || role === 'admin';
+  const canProvision = role === 'owner';
 
   return (
     <main className="min-h-screen bg-stone-50 py-10 px-5">
@@ -167,8 +173,8 @@ export default function OwnerPage() {
         </div>
 
         <nav className="flex gap-2 mb-6">
-          {([['events', 'Events'], ['registrations', 'Registrations + refunds'], ['staff', 'Gate staff']] as [Tab, string][])
-            .filter(([key]) => (key === 'events' ? canEvents : key === 'registrations' ? canFinance : canStaff))
+          {([['events', 'Events'], ['registrations', 'Registrations + refunds'], ['staff', 'Gate staff'], ['accounts', 'Accounts']] as [Tab, string][])
+            .filter(([key]) => (key === 'events' ? canEvents : key === 'registrations' ? canFinance : key === 'staff' ? canStaff : canProvision))
             .map(([key, label]) => (
             <button key={key} onClick={() => void switchTab(key)} className={`px-4 py-2 rounded-full border text-sm font-medium ${tab === key ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'}`}>{label}</button>
           ))}
@@ -398,7 +404,35 @@ export default function OwnerPage() {
           </div>
         )}
 
-        <p className="text-xs text-stone-400 mt-10">Owner console is intentionally not linked from public navigation. <Todo>owner: per-account audit trail</Todo></p>
+        {tab === 'accounts' && canProvision && (
+          <section className="bg-white rounded-3xl border border-stone-100 shadow-sm p-6">
+            <h2 className="text-xl font-bold text-stone-900 mb-3">Provision a management account</h2>
+            <p className="text-sm text-stone-600 mb-4">Owner only. Choose the smallest role that does the job: finance sees money and guest lists; content manages events; admin runs operations and staff. Every action is written to the audit log.</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              void run(async () => {
+                await provisionAccount(token, {
+                  email: accountEmail.trim(), password: accountPassword,
+                  username: accountName.trim() || undefined, role: accountRole,
+                });
+                setAccountEmail(''); setAccountPassword(''); setAccountName('');
+              }, 'Account created — hand the password over out-of-band, then ask them to change it.');
+            }} className="grid sm:grid-cols-2 gap-4">
+              <input className={input} type="email" placeholder="Email" required value={accountEmail} onChange={(e) => setAccountEmail(e.target.value)} />
+              <input className={input} placeholder="Display name (optional)" value={accountName} onChange={(e) => setAccountName(e.target.value)} />
+              <input className={input} type="password" placeholder="Temporary password (8+)" minLength={8} required value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} />
+              <select className={input} value={accountRole} onChange={(e) => setAccountRole(e.target.value as typeof accountRole)} aria-label="Role">
+                <option value="admin">admin — operations + staff</option>
+                <option value="finance">finance — money + guest lists</option>
+                <option value="content">content — events only</option>
+                <option value="owner">owner — full control (use sparingly)</option>
+              </select>
+              <button className={`${btn} justify-self-start sm:col-span-2`} disabled={busy}>Create account</button>
+            </form>
+          </section>
+        )}
+
+        <p className="text-xs text-stone-400 mt-10">Owner console is intentionally not linked from public navigation. <Todo>owner: audit viewer + per-field history</Todo></p>
       </div>
     </main>
   );

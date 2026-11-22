@@ -189,6 +189,13 @@ export async function createStaff(token: string, body: { email: string; password
 export async function deleteStaff(token: string, id: string) {
   return apiJson<{ status: string }>(`/api/staff/${id}`, { method: 'DELETE', headers: authHeaders(token) });
 }
+export async function provisionAccount(token: string, body: {
+  email: string; password: string; role: 'admin' | 'owner' | 'finance' | 'content'; username?: string;
+}) {
+  return apiJson<{ account: StaffMember }>('/api/admins', {
+    method: 'POST', headers: authHeaders(token), body: JSON.stringify(body),
+  });
+}
 
 // Customer sessions live in sessionStorage (tab-scoped, gone on close).
 // Staff/door tokens deliberately stay in component memory only — see /gate.
