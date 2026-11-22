@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { QRCodeSVG } from 'qrcode.react';
 import { apiConfigured, apiFetch } from '../../lib/api';
-import Todo from '../../components/Todo';
 
 type ApiEvent = {
   id: string;
@@ -138,7 +137,7 @@ export default function EventExperience({ id }: { id: string }) {
         <div className="grid md:grid-cols-5 gap-8 mt-6">
           {/* Event panel */}
           <section className="md:col-span-2 bg-white rounded-3xl border border-stone-100 shadow-sm p-6 h-fit">
-            <span className="inline-block bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">{dateLabel}</span>
+            <span className="inline-block bg-nareli text-white text-xs font-bold px-3 py-1 rounded-full mb-3">{dateLabel}</span>
             <h1 className="text-3xl font-bold text-stone-900 mb-3">{event.title}</h1>
             {event.description && <p className="text-stone-600 mb-4">{event.description}</p>}
             <p className="text-stone-600 text-sm mb-4">{event.location ?? 'Venue revealed after RSVP'}</p>
@@ -150,7 +149,7 @@ export default function EventExperience({ id }: { id: string }) {
               <p className="text-stone-700">Open seating</p>
             )}
             <p className="mt-4 text-xs text-stone-400">
-              Pricing in KSh will be set by the owner — <Todo>owner: KSh prices</Todo>
+              Ticket prices will be announced before sale. No payment is collected online yet.
             </p>
           </section>
 
@@ -178,7 +177,7 @@ export default function EventExperience({ id }: { id: string }) {
                   <p className="text-sm text-stone-600 mb-2">Party: {result.registration.attendee_names.join(', ')}</p>
                 ) : null}
                 <div className="flex gap-3 justify-center print:hidden">
-                  <button onClick={() => window.print()} className="bg-stone-900 text-white px-5 py-3 rounded-full font-medium hover:bg-stone-700">Print / Save ticket (PDF)</button>
+                  <button onClick={() => window.print()} className="bg-nareli text-white px-5 py-3 rounded-full font-medium hover:bg-nareli-dark">Print / Save ticket (PDF)</button>
                   <Link href="/" className="border border-stone-300 px-5 py-3 rounded-full font-medium hover:border-stone-500">Done</Link>
                 </div>
                 <p className="mt-4 text-[11px] text-stone-400 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
@@ -186,8 +185,8 @@ export default function EventExperience({ id }: { id: string }) {
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); void submit(); }} className="space-y-4">
                 <div className="flex gap-2 text-sm">
-                  <button type="button" onClick={() => setMode('create')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'create' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
-                  <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
+                  <button type="button" onClick={() => setMode('create')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'create' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
+                  <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
                 </div>
 
                 <div>
@@ -207,7 +206,7 @@ export default function EventExperience({ id }: { id: string }) {
                     </select>
                   </div>
                   <div>
-                    <label className={label} htmlFor="phone">Door phone <Todo>door shows first names only</Todo></label>
+                    <label className={label} htmlFor="phone">Door phone</label>
                     <input id="phone" required className={input} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. 0712 345 678" autoComplete="tel" />
                   </div>
                 </div>
@@ -228,7 +227,7 @@ export default function EventExperience({ id }: { id: string }) {
 
                 {formError && <p className="text-red-700 text-sm">{formError}</p>}
 
-                <button type="submit" disabled={pending} className="w-full bg-stone-900 text-white py-4 rounded-2xl text-lg font-semibold hover:bg-stone-700 disabled:opacity-60">
+                <button type="submit" disabled={pending} className="w-full bg-nareli text-white py-4 rounded-2xl text-lg font-semibold hover:bg-nareli-dark disabled:opacity-60">
                   {pending ? 'Securing your seat…' : soldOut ? 'Join the waitlist' : 'Reserve my seat'}
                 </button>
                 <p className="text-[11px] text-stone-400">If the event fills, you will join the waitlist automatically. No payment is collected online yet.</p>

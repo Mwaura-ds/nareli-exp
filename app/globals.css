@@ -3,11 +3,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Nareli brand direction from the CEO: light, warm brown, executive */
+  --nareli-brown: #6e4324;
+  --nareli-brown-dark: #523119;
+  --nareli-sand: #f6efe6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-nareli: var(--nareli-brown);
+  --color-nareli-dark: var(--nareli-brown-dark);
+  --color-nareli-sand: var(--nareli-sand);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

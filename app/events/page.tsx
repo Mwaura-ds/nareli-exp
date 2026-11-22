@@ -5,7 +5,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ApiError, apiConfigured, getEvents, type ApiEvent, type Pagination } from '../lib/api';
-import Todo from '../components/Todo';
 
 type Status = 'upcoming' | 'ongoing' | 'past';
 const STATUSES: { key: Status; label: string }[] = [
@@ -68,7 +67,7 @@ export default function EventsPage() {
                 key={s.key}
                 onClick={() => { setStatus(s.key); setPage(1); setLoading(true); }}
                 className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
-                  status === s.key ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'
+                  status === s.key ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'
                 }`}
               >
                 {s.label}
@@ -86,7 +85,7 @@ export default function EventsPage() {
               onChange={(e) => setLocation(e.target.value)}
               aria-label="Filter by location"
             />
-            <button type="submit" className="shrink-0 bg-stone-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-stone-700">
+            <button type="submit" className="shrink-0 bg-nareli text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-nareli-dark">
               Filter
             </button>
           </form>
@@ -116,14 +115,14 @@ export default function EventsPage() {
                 className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 hover:shadow-md hover:border-stone-300 transition-all"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full">{dateFmt.format(new Date(event.start_time))}</span>
+                  <span className="bg-nareli text-white text-xs font-bold px-3 py-1 rounded-full">{dateFmt.format(new Date(event.start_time))}</span>
                   {soldOut && <span className="text-red-700 text-xs font-semibold">Waitlist open</span>}
                   {!soldOut && seatsLeft !== null && seatsLeft <= 10 && <span className="text-amber-700 text-xs font-semibold">{seatsLeft} seats left</span>}
                 </div>
                 <h2 className="text-xl font-bold text-stone-900 mb-1">{event.title}</h2>
                 <p className="text-stone-600 text-sm mb-4">{event.location ?? 'Venue revealed after RSVP'}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-widest text-stone-500">KSh <Todo>owner: prices + payment rails</Todo></span>
+                  <span className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</span>
                   <span className="text-stone-900 text-sm font-medium">{soldOut ? 'Join waitlist →' : 'Reserve →'}</span>
                 </div>
               </Link>

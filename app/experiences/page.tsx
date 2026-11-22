@@ -27,7 +27,7 @@ export default function ExperiencesPage() {
               <div className="text-right">
                 <p className="text-xl font-semibold text-stone-900 mb-3">{pkg.price}</p>
                 <Link href="/contact">
-                  <button className="bg-stone-900 text-white px-6 py-2 rounded-full text-sm hover:bg-stone-700 transition-colors">
+                  <button className="bg-nareli text-white px-6 py-2 rounded-full text-sm hover:bg-nareli-dark transition-colors">
                     Book Now
                   </button>
                 </Link>

@@ -18,7 +18,7 @@ type OwnerEvent = ApiEvent & { is_public: boolean; cancelled_at?: string | null 
 type Tab = 'events' | 'registrations' | 'staff' | 'accounts';
 
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
-const btn = 'bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-700 disabled:opacity-50';
+const btn = 'bg-nareli text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-nareli-dark disabled:opacity-50';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500 disabled:opacity-50';
 const fmtKes = (n: number | null | undefined) => `KSh ${Number(n ?? 0).toLocaleString('en-KE')}`;
 const fmtDate = (s: string) => new Intl.DateTimeFormat('en-KE', {
@@ -176,11 +176,11 @@ export default function OwnerPage() {
           {([['events', 'Events'], ['registrations', 'Registrations + refunds'], ['staff', 'Gate staff'], ['accounts', 'Accounts']] as [Tab, string][])
             .filter(([key]) => (key === 'events' ? canEvents : key === 'registrations' ? canFinance : key === 'staff' ? canStaff : canProvision))
             .map(([key, label]) => (
-            <button key={key} onClick={() => void switchTab(key)} className={`px-4 py-2 rounded-full border text-sm font-medium ${tab === key ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'}`}>{label}</button>
+            <button key={key} onClick={() => void switchTab(key)} className={`px-4 py-2 rounded-full border text-sm font-medium ${tab === key ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600 hover:border-stone-500'}`}>{label}</button>
           ))}
         </nav>
 
-        {message && <div className="bg-stone-900 text-white rounded-2xl px-5 py-3 text-sm mb-5">{message}</div>}
+        {message && <div className="bg-nareli text-white rounded-2xl px-5 py-3 text-sm mb-5">{message}</div>}
 
         {tab === 'events' && canEvents && (
           <div className="space-y-8">
@@ -226,7 +226,7 @@ export default function OwnerPage() {
                     <div className="flex gap-2 text-xs">
                       {!ev.is_public && <span className="bg-stone-200 text-stone-700 px-2 py-1 rounded-full font-semibold">Private</span>}
                       {ev.cancelled_at && <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full font-semibold">Cancelled</span>}
-                      <span className="bg-stone-900 text-white px-2 py-1 rounded-full font-semibold">{ev.current_registrations} bookings</span>
+                      <span className="bg-nareli text-white px-2 py-1 rounded-full font-semibold">{ev.current_registrations} bookings</span>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">

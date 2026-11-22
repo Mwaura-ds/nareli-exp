@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { apiConfigured, apiFetch } from './lib/api';
-import Todo from './components/Todo';
 
 type ApiEvent = {
   id: string;
@@ -147,7 +146,7 @@ export default function Home() {
               <motion.div key={event.id} variants={item} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-stone-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:shadow-md transition-shadow">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full">{dateLabel}</span>
+                    <span className="bg-nareli text-white text-xs font-bold px-3 py-1 rounded-full">{dateLabel}</span>
                     {soldOut && <span className="text-red-700 text-sm font-medium">Sold out — waitlist open</span>}
                     {!soldOut && seatsLeft !== null && seatsLeft <= 10 && <span className="text-amber-700 text-sm font-medium">Only {seatsLeft} seats left</span>}
                   </div>
@@ -158,8 +157,8 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
-                  <p className="text-xs uppercase tracking-widest text-stone-500">KSh <Todo>owner: prices + payments</Todo></p>
-                  <Link href={`/events/${event.id}`} className="bg-stone-900 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-700 transition-colors w-full md:w-auto text-center">
+                  <p className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</p>
+                  <Link href={`/events/${event.id}`} className="bg-nareli text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-nareli-dark transition-colors w-full md:w-auto text-center">
                     {soldOut ? 'Join Waitlist' : 'Reserve'}
                   </Link>
                 </div>
