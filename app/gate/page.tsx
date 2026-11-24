@@ -197,7 +197,7 @@ export default function GatePage() {
           <input className={input} type="email" placeholder="Staff email" value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} autoComplete="username" />
           <input className={input} type="password" placeholder="Password" value={staffPassword} onChange={(e) => setStaffPassword(e.target.value)} autoComplete="current-password" />
           {staffError && <p className="text-red-700 text-sm">{staffError}</p>}
-          <button onClick={staffLogin} className="w-full bg-stone-900 text-white py-3 rounded-2xl font-semibold hover:bg-stone-700">Sign in</button>
+          <button onClick={staffLogin} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold hover:bg-nareli-dark">Sign in</button>
           <p className="text-[11px] text-stone-400">Staff sessions are seat-level: gate staff see first names and counts only.</p>
         </div>
       </main>
@@ -235,7 +235,7 @@ export default function GatePage() {
         </section>
 
         <input className={input} inputMode="tel" placeholder="Phone number (e.g. 0712 345 678)" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && doLookup()} />
-        <button onClick={doLookup} disabled={busy || !eventId || !phone.trim()} className="w-full bg-stone-900 text-white py-3 rounded-2xl font-semibold disabled:opacity-50">{busy ? 'Checking…' : 'Find booking'}</button>
+        <button onClick={doLookup} disabled={busy || !eventId || !phone.trim()} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">{busy ? 'Checking…' : 'Find booking'}</button>
         {lookupError && <p className="text-red-700 text-sm">{lookupError}</p>}
 
         {result?.matches?.map((m) => {

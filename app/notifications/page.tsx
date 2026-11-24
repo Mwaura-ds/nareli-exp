@@ -9,7 +9,6 @@ import {
   ApiError, apiConfigured, authenticate, clearSessionToken, getNotifications,
   getSessionToken, saveSessionToken, type Notification, type Pagination,
 } from '../lib/api';
-import Todo from '../components/Todo';
 
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
 const fmt = new Intl.DateTimeFormat('en-KE', {
@@ -88,16 +87,16 @@ export default function NotificationsPage() {
           <h1 className="text-2xl font-bold text-stone-900">Your messages</h1>
           <p className="text-stone-600 text-sm">Sign in with the email you booked with to see booking and event updates.</p>
           <div className="flex gap-2 text-sm">
-            <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
-            <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
+            <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
+            <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
           </div>
           <input className={input} type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
           <input className={input} type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
           {authError && <p className="text-red-700 text-sm">{authError}</p>}
-          <button onClick={signIn} disabled={busy || !email || password.length < 8} className="w-full bg-stone-900 text-white py-3 rounded-2xl font-semibold disabled:opacity-50">
+          <button onClick={signIn} disabled={busy || !email || password.length < 8} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">
             {busy ? 'Signing in…' : 'Continue'}
           </button>
-          <p className="text-xs text-stone-400">Session lasts until you close this browser tab. <Todo>owner: email/SMS delivery</Todo></p>
+          <p className="text-xs text-stone-400">Messages appear here in your account. Email delivery is not available yet.</p>
         </div>
       </main>
     );

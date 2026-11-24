@@ -93,7 +93,7 @@ export default function ContactPage() {
                 <textarea name="message" rows={4} required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Date, number of guests, location..."></textarea>
               </div>
 
-              <button type="submit" disabled={isSubmitting} className="w-full bg-stone-900 text-white py-4 rounded-full text-lg font-semibold hover:bg-stone-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              <button type="submit" disabled={isSubmitting} className="w-full bg-nareli text-white py-4 rounded-full text-lg font-semibold hover:bg-nareli-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {isSubmitting ? 'Sending...' : 'Send Inquiry'}
               </button>
             </form>
