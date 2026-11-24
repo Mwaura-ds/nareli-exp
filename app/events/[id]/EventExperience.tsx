@@ -1,3 +1,4 @@
+
 'use client';
 
 // Client shell for /events/[id] — all interactive logic lives here.
@@ -19,16 +20,22 @@ type ApiEvent = {
   end_time: string;
   capacity: number | null;
   current_registrations: number;
+  price_kes?: number | null;
 };
 
 type RegistrationResult = {
   status: 'registered' | 'waitlisted' | 'already_registered' | 'cancelled';
   note?: string;
   checkin_token?: string | null;
-  registration?: { id?: string; party_size?: number; attendee_names?: string[] | null; ticket_phone?: string | null; arrived_count?: number } | null;
+  registration?: {
+    id?: string;
+    party_size?: number | null;
+    attendee_names?: string[] | null;
+    ticket_phone?: string | null;
+    arrived_count?: number;
+  } | null;
   waitlist?: { position?: number } | null;
 };
-
 
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const label = 'block text-sm font-medium text-stone-700 mb-1';
