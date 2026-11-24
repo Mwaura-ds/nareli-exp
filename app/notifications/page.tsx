@@ -10,7 +10,7 @@ import {
   getSessionToken, saveSessionToken, type Notification, type Pagination,
 } from '../lib/api';
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const fmt = new Intl.DateTimeFormat('en-KE', {
   day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi',
 });
@@ -96,7 +96,7 @@ export default function NotificationsPage() {
           <button onClick={signIn} disabled={busy || !email || password.length < 8} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">
             {busy ? 'Signing in…' : 'Continue'}
           </button>
-          <p className="text-xs text-stone-400">Messages appear here in your account. Email delivery is not available yet.</p>
+          <p className="text-xs text-stone-600">Messages appear here in your account. Email delivery is not available yet.</p>
         </div>
       </main>
     );
@@ -132,7 +132,7 @@ export default function NotificationsPage() {
                 </span>
               </div>
               <p className="text-stone-600 text-sm whitespace-pre-wrap">{n.body}</p>
-              <p className="text-xs text-stone-400 mt-2">{fmt.format(new Date(n.created_at))}</p>
+              <p className="text-xs text-stone-600 mt-2">{fmt.format(new Date(n.created_at))}</p>
             </article>
           ))}
         </div>

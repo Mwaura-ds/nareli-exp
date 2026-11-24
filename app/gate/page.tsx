@@ -21,7 +21,7 @@ type Match = {
 };
 type DoorResult = { event?: { id: string; title: string; start_time: string }; matches?: Match[] };
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500';
 
 export default function GatePage() {
@@ -198,7 +198,7 @@ export default function GatePage() {
           <input className={input} type="password" aria-label="Password" placeholder="Password" value={staffPassword} onChange={(e) => setStaffPassword(e.target.value)} autoComplete="current-password" />
           {staffError && <p className="text-red-700 text-sm">{staffError}</p>}
           <button onClick={staffLogin} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold hover:bg-nareli-dark">Sign in</button>
-          <p className="text-[11px] text-stone-400">Staff sessions are seat-level: gate staff see first names and counts only.</p>
+          <p className="text-[11px] text-stone-600">Staff sessions are seat-level: gate staff see first names and counts only.</p>
         </div>
       </main>
     );
@@ -231,7 +231,7 @@ export default function GatePage() {
           </div>
           {scanError && <p className="text-red-700 text-xs">{scanError}</p>}
           {scanNotice && <p className="text-green-700 text-sm font-semibold">{scanNotice}</p>}
-          <p className="text-[11px] text-stone-400">First scan wins. The door also supports phone lookup below when a QR is unavailable.</p>
+          <p className="text-[11px] text-stone-600">First scan wins. The door also supports phone lookup below when a QR is unavailable.</p>
         </section>
 
         <input className={input} inputMode="tel" aria-label="Phone number" placeholder="Phone number (e.g. 0712 345 678)" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && doLookup()} />

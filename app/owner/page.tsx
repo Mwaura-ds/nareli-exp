@@ -17,7 +17,7 @@ import Todo from '../components/Todo';
 type OwnerEvent = ApiEvent & { is_public: boolean; cancelled_at?: string | null };
 type Tab = 'events' | 'registrations' | 'staff' | 'accounts';
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-500';
 const btn = 'bg-nareli text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-nareli-dark disabled:opacity-50';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500 disabled:opacity-50';
 const fmtKes = (n: number | null | undefined) => `KSh ${Number(n ?? 0).toLocaleString('en-KE')}`;
@@ -149,7 +149,7 @@ export default function OwnerPage() {
           <input className={input} type="password" aria-label="Password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
           {authError && <p className="text-red-700 text-sm">{authError}</p>}
           <button onClick={signIn} disabled={busy || !email || !password} className={`${btn} w-full`}>{busy ? 'Signing in…' : 'Sign in'}</button>
-          <p className="text-[11px] text-stone-400">Session is held in this tab only; closing it signs you out.</p>
+          <p className="text-[11px] text-stone-600">Session is held in this tab only; closing it signs you out.</p>
         </div>
       </main>
     );

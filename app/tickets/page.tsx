@@ -12,7 +12,7 @@ import {
 } from '../lib/api';
 
 type Ticket = { event: ApiEvent; registration: MyRegistration; token: string | null };
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-stone-500 placeholder:text-stone-500';
 const btn = 'bg-nareli text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-nareli-dark disabled:opacity-50';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500 disabled:opacity-50';
 const fmt = new Intl.DateTimeFormat('en-KE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi' });
@@ -169,7 +169,7 @@ export default function TicketsPage() {
             </article>
           ))}
         </div>
-        <p className="text-xs text-stone-400 mt-8">Session lasts until you close this tab. Save or print your ticket before leaving.</p>
+        <p className="text-xs text-stone-600 mt-8">Session lasts until you close this tab. Save or print your ticket before leaving.</p>
       </div>
     </main>
   );

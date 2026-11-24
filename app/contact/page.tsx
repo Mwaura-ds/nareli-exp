@@ -69,11 +69,11 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="contact-name" className="block text-sm font-medium text-stone-700 mb-2">Name</label>
-                  <input id="contact-name" name="name" type="text" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Jane Doe" />
+                  <input id="contact-name" name="name" type="text" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-500" placeholder="Jane Doe" />
                 </div>
                 <div>
                   <label htmlFor="contact-email" className="block text-sm font-medium text-stone-700 mb-2">Email</label>
-                  <input id="contact-email" name="email" type="email" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="jane@example.com" />
+                  <input id="contact-email" name="email" type="email" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-500" placeholder="jane@example.com" />
                 </div>
               </div>
 
@@ -90,7 +90,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="contact-message" className="block text-sm font-medium text-stone-700 mb-2">Tell us about your vision</label>
-                <textarea id="contact-message" name="message" rows={4} required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Date, number of guests, location..."></textarea>
+                <textarea id="contact-message" name="message" rows={4} required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-500" placeholder="Date, number of guests, location..."></textarea>
               </div>
 
               <button type="submit" disabled={isSubmitting} className="w-full bg-nareli text-white py-4 rounded-full text-lg font-semibold hover:bg-nareli-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

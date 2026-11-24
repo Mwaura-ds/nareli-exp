@@ -13,7 +13,7 @@ const STATUSES: { key: Status; label: string }[] = [
   { key: 'past', label: 'Past' },
 ];
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const dateFmt = new Intl.DateTimeFormat('en-KE', {
   weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi',
 });

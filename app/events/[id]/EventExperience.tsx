@@ -30,7 +30,7 @@ type RegistrationResult = {
 };
 
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const label = 'block text-sm font-medium text-stone-700 mb-1';
 
 export default function EventExperience({ id }: { id: string }) {
@@ -209,7 +209,7 @@ export default function EventExperience({ id }: { id: string }) {
             ) : (
               <p className="text-stone-700">Open seating</p>
             )}
-            <p className="mt-4 text-xs text-stone-400">
+            <p className="mt-4 text-xs text-stone-600">
               Ticket prices will be announced before sale. No payment is collected online yet.
             </p>
           </section>
@@ -254,11 +254,11 @@ export default function EventExperience({ id }: { id: string }) {
                 </div>
                 {cancelError && <p className="mt-2 text-xs text-red-700">{cancelError}</p>}
                 {result.status === 'waitlisted' ? (
-                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">No ticket has been issued yet — you will get a QR only if a seat opens for your party.</p>
+                  <p className="mt-4 text-[11px] text-stone-600 print:hidden">No ticket has been issued yet — you will get a QR only if a seat opens for your party.</p>
                 ) : result.status === 'cancelled' ? (
-                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">This ticket is no longer valid at the door.</p>
+                  <p className="mt-4 text-[11px] text-stone-600 print:hidden">This ticket is no longer valid at the door.</p>
                 ) : (
-                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
+                  <p className="mt-4 text-[11px] text-stone-600 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
                 )}
               </div>
             ) : (
