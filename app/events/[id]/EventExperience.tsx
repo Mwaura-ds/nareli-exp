@@ -5,7 +5,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { QRCodeSVG } from 'qrcode.react';
-import { apiConfigured, apiFetch } from '../../lib/api';
+import {
+  apiConfigured, apiFetch, cancelMyRegistration, getMyRegistration, getSessionToken,
+  saveSessionToken,
+} from '../../lib/api';
 
 type ApiEvent = {
   id: string;
@@ -19,10 +22,10 @@ type ApiEvent = {
 };
 
 type RegistrationResult = {
-  status: 'registered' | 'waitlisted' | 'already_registered';
+  status: 'registered' | 'waitlisted' | 'already_registered' | 'cancelled';
   note?: string;
   checkin_token?: string | null;
-  registration?: { party_size?: number; attendee_names?: string[] | null; ticket_phone?: string | null; arrived_count?: number } | null;
+  registration?: { id?: string; party_size?: number; attendee_names?: string[] | null; ticket_phone?: string | null; arrived_count?: number } | null;
   waitlist?: { position?: number } | null;
 };
 
@@ -45,6 +48,8 @@ export default function EventExperience({ id }: { id: string }) {
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [result, setResult] = useState<RegistrationResult | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!apiConfigured) return;
@@ -55,6 +60,42 @@ export default function EventExperience({ id }: { id: string }) {
       })
       .then(setEvent)
       .catch((e) => setLoadError(e instanceof Error ? e.message : 'Could not load event'));
+  }, [id]);
+
+  // Restore an existing booking or waitlist position after a reload / new tab.
+  // A guest token is tab-scoped; staff/door tokens never enter sessionStorage.
+  useEffect(() => {
+    if (!apiConfigured) return;
+    const token = getSessionToken();
+    if (!token) return;
+    let cancelled = false;
+    getMyRegistration(token, id)
+      .then((mine) => {
+        if (cancelled || mine.status === 'none') return;
+        if (mine.status === 'registered' || mine.status === 'cancelled') {
+          setResult((prev) => prev ?? {
+            status: mine.status === 'registered' ? 'registered' : 'cancelled',
+            note: 'restored',
+            checkin_token: mine.checkin_token,
+            registration: mine.registration,
+            waitlist: null,
+          });
+          const restoredPhone = mine.registration?.ticket_phone;
+          if (restoredPhone) setPhone((prev) => prev || restoredPhone);
+        } else if (mine.status === 'waitlisted') {
+          setResult((prev) => prev ?? {
+            status: 'waitlisted',
+            note: 'restored',
+            checkin_token: null,
+            registration: null,
+            waitlist: mine.waitlist,
+          });
+          const restoredPhone = mine.waitlist?.ticket_phone;
+          if (restoredPhone) setPhone((prev) => prev || restoredPhone);
+        }
+      })
+      .catch(() => { /* stale/expired session: leave the form visible */ });
+    return () => { cancelled = true; };
   }, [id]);
 
   const syncNames = (size: number) => {
@@ -87,6 +128,7 @@ export default function EventExperience({ id }: { id: string }) {
         throw new Error(authJson?.error ?? 'Could not sign you in.');
       }
       const token: string = authJson.token;
+      saveSessionToken(token); // tab-scoped: needed for QR restore and self-cancel
 
       // 2) book
       const bookRes = await apiFetch(`/api/events/${event.id}/register`, {
@@ -109,9 +151,27 @@ export default function EventExperience({ id }: { id: string }) {
     }
   };
 
+  const cancelBooking = async () => {
+    const token = getSessionToken();
+    if (!token || cancelling) return;
+    if (!window.confirm('Cancel this booking? If someone is waiting, they may be promoted automatically.')) return;
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      const res = await cancelMyRegistration(token, id);
+      setResult({ status: 'cancelled', note: res.status, registration: null, waitlist: null, checkin_token: null });
+    } catch (e) {
+      setCancelError(e instanceof Error ? e.message : 'Could not cancel — try again.');
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const seatsLeft = event && event.capacity != null ? Math.max(0, event.capacity - event.current_registrations) : null;
   const soldOut = seatsLeft === 0;
   const partyTooLarge = seatsLeft !== null && Number(partySize) > seatsLeft;
+  const hasTicket = (result?.status === 'registered' || result?.status === 'already_registered') && !!result.checkin_token;
+  const canCancel = (result?.status === 'registered' || result?.status === 'already_registered') && !!getSessionToken();
 
   if (loadError) {
     return (
@@ -159,16 +219,20 @@ export default function EventExperience({ id }: { id: string }) {
             {result ? (
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-stone-900 mb-1">
-                  {result.status === 'waitlisted' ? 'You are on the waitlist' : result.status === 'already_registered' ? 'You are already in' : 'You are in!'}
+                  {result.status === 'waitlisted' ? 'You are on the waitlist'
+                    : result.status === 'cancelled' ? 'Booking cancelled'
+                    : result.status === 'already_registered' ? 'You are already in' : 'You are in!'}
                 </h2>
                 <p className="text-stone-600 mb-4">
                   {result.status === 'waitlisted'
                     ? `Position #${result.waitlist?.position ?? '—'}. We will reach out on ${phone.trim()} if a seat opens. Your party of ${Number(partySize)} cannot be confirmed; ${seatsLeft ?? 'the remaining'} seat${seatsLeft === 1 ? '' : 's'} remain for smaller parties.`
+                    : result.status === 'cancelled'
+                    ? 'Your booking was cancelled. If someone was waiting, they may have been promoted automatically.'
                     : 'Show this QR (or your phone) at the door — your party enters together.'}
                 </p>
-                {result.checkin_token && result.status !== 'waitlisted' && (
+                {hasTicket && (
                   <div className="print:block inline-block bg-white border border-stone-100 rounded-2xl p-4 mb-4">
-                    <QRCodeSVG value={result.checkin_token} size={200} includeMargin />
+                    <QRCodeSVG value={result.checkin_token!} size={200} includeMargin />
                     <p className="mt-2 font-semibold text-stone-900">{event.title}</p>
                     <p className="text-xs text-stone-500">{dateLabel}</p>
                     {result.registration?.ticket_phone && <p className="text-xs text-stone-500">Door key: {result.registration.ticket_phone}</p>}
@@ -177,14 +241,22 @@ export default function EventExperience({ id }: { id: string }) {
                 {result.registration?.attendee_names?.length ? (
                   <p className="text-sm text-stone-600 mb-2">Party: {result.registration.attendee_names.join(', ')}</p>
                 ) : null}
-                <div className="flex gap-3 justify-center print:hidden">
-                  {result.status !== 'waitlisted' && (
+                <div className="flex flex-wrap gap-3 justify-center print:hidden">
+                  {hasTicket && (
                     <button onClick={() => window.print()} className="bg-nareli text-white px-5 py-3 rounded-full font-medium hover:bg-nareli-dark">Print / Save ticket (PDF)</button>
+                  )}
+                  {canCancel && (
+                    <button onClick={() => void cancelBooking()} disabled={cancelling} className="border border-red-300 text-red-700 px-5 py-3 rounded-full font-medium hover:border-red-500 disabled:opacity-50">
+                      {cancelling ? 'Cancelling…' : 'Cancel my booking'}
+                    </button>
                   )}
                   <Link href="/" className="border border-stone-300 px-5 py-3 rounded-full font-medium hover:border-stone-500">Done</Link>
                 </div>
+                {cancelError && <p className="mt-2 text-xs text-red-700">{cancelError}</p>}
                 {result.status === 'waitlisted' ? (
                   <p className="mt-4 text-[11px] text-stone-400 print:hidden">No ticket has been issued yet — you will get a QR only if a seat opens for your party.</p>
+                ) : result.status === 'cancelled' ? (
+                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">This ticket is no longer valid at the door.</p>
                 ) : (
                   <p className="mt-4 text-[11px] text-stone-400 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
                 )}

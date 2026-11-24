@@ -126,6 +126,30 @@ export async function authenticate(
   });
 }
 
+export type MyRegistration = {
+  status: 'registered' | 'waitlisted' | 'none' | 'cancelled';
+  registration: {
+    id: string; party_size: number; ticket_phone: string | null;
+    attendee_names: string[] | null; arrived_count: number; status: string;
+  } | null;
+  waitlist: { position: number; party_size: number; ticket_phone: string | null } | null;
+  checkin_token: string | null;
+};
+
+export async function getMyRegistration(token: string, eventId: string) {
+  return apiJson<MyRegistration>(`/api/events/${eventId}/my-registration`, {
+    headers: authHeaders(token),
+  });
+}
+
+export async function cancelMyRegistration(token: string, eventId: string) {
+  return apiJson<{ status: string; promoted?: string | null }>(`/api/events/${eventId}/cancel`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({}),
+  });
+}
+
 export async function getNotifications(token: string, page = 1) {
   return apiJson<Envelope<Notification>>(
     `/api/notifications?page=${page}&per_page=20`,
