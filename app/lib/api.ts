@@ -126,18 +126,15 @@ export async function authenticate(
   });
 }
 
-export type MyRegistration = {
+export type MyBookingState = {
   status: 'registered' | 'waitlisted' | 'none' | 'cancelled';
-  registration: {
-    id: string; party_size: number; ticket_phone: string | null;
-    attendee_names: string[] | null; arrived_count: number; status: string;
-  } | null;
+  registration: MyRegistration | null;
   waitlist: { position: number; party_size: number; ticket_phone: string | null } | null;
   checkin_token: string | null;
 };
 
 export async function getMyRegistration(token: string, eventId: string) {
-  return apiJson<MyRegistration>(`/api/events/${eventId}/my-registration`, {
+  return apiJson<MyBookingState>(`/api/events/${eventId}/my-registration`, {
     headers: authHeaders(token),
   });
 }
@@ -457,35 +454,6 @@ export type MyRegistration = {
   refund_status: string;
   registered_at: string;
 };
-
-export async function getMyRegistration(
-  token: string,
-  eventId: string
-) {
-  return apiJson<{
-    registration: MyRegistration;
-    checkin_token: string | null;
-  }>(
-    `/api/events/${eventId}/my-registration`,
-    {
-      headers: authHeaders(token),
-    }
-  );
-}
-
-export async function cancelMyRegistration(
-  token: string,
-  eventId: string
-) {
-  return apiJson<{ status: string }>(
-    `/api/events/${eventId}/cancel`,
-    {
-      method: 'POST',
-      headers: authHeaders(token),
-      body: JSON.stringify({}),
-    }
-  );
-}
 
 // Customer sessions live in sessionStorage (tab-scoped, gone on close).
 // Staff/door tokens deliberately stay in component memory only — see /gate.

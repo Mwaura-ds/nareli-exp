@@ -10,11 +10,10 @@ import {
   getEvents, getMyRegistration, getSessionToken, saveSessionToken,
   type ApiEvent, type MyRegistration,
 } from '../lib/api';
-import Todo from '../components/Todo';
 
 type Ticket = { event: ApiEvent; registration: MyRegistration; token: string | null };
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
-const btn = 'bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-700 disabled:opacity-50';
+const btn = 'bg-nareli text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-nareli-dark disabled:opacity-50';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500 disabled:opacity-50';
 const fmt = new Intl.DateTimeFormat('en-KE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi' });
 
@@ -44,7 +43,9 @@ export default function TicketsPage() {
       for (const ev of all) {
         try {
           const r = await getMyRegistration(t, ev.id);
-          found.push({ event: ev, registration: r.registration, token: r.checkin_token });
+          if (r.status === 'registered' && r.registration) {
+            found.push({ event: ev, registration: r.registration, token: r.checkin_token });
+          }
         } catch (e) {
           if (!(e instanceof ApiError && e.status === 404)) throw e; // 404 = no booking for this event
         }
@@ -92,8 +93,8 @@ export default function TicketsPage() {
           <h1 className="text-2xl font-bold text-stone-900">My tickets</h1>
           <p className="text-stone-600 text-sm">Sign in with the email you booked with to re-download your QR or cancel a booking.</p>
           <div className="flex gap-2 text-sm">
-            <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
-            <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
+            <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-nareli text-white border-nareli' : 'border-stone-300 text-stone-600'}`}>Log in</button>
+            <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-nareli text-white border-nareli' : 'border-stone-300 text-stone-600'}`}>New account</button>
           </div>
           <input className={input} type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
           <input className={input} type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
@@ -110,7 +111,7 @@ export default function TicketsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-stone-900">My tickets</h1>
-            <p className="text-stone-600 text-sm">Your QR works at the door — screenshot or print it. <Todo>owner: rotating QR</Todo></p>
+            <p className="text-stone-600 text-sm">Your QR works at the door — screenshot or print it.</p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => void loadTickets(token)} className={ghost}>Refresh</button>
@@ -118,7 +119,7 @@ export default function TicketsPage() {
           </div>
         </div>
 
-        {notice && <div className="bg-stone-900 text-white rounded-2xl px-5 py-3 text-sm mb-6">{notice}</div>}
+        {notice && <div className="bg-nareli text-white rounded-2xl px-5 py-3 text-sm mb-6">{notice}</div>}
         {loading && <p className="text-stone-500 py-10 text-center">Looking up your bookings…</p>}
         {!loading && error && <p className="text-red-700 text-sm py-6 text-center">{error}</p>}
         {!loading && !error && tickets.length === 0 && (
@@ -131,7 +132,7 @@ export default function TicketsPage() {
           {tickets.map(({ event, registration: reg, token: qr }) => (
             <article key={reg.id} className="bg-white rounded-3xl border border-stone-100 shadow-sm p-6 grid md:grid-cols-[1fr_auto] gap-6">
               <div>
-                <span className="bg-stone-900 text-white text-xs font-bold px-3 py-1 rounded-full">{fmt.format(new Date(event.start_time))}</span>
+                <span className="bg-nareli text-white text-xs font-bold px-3 py-1 rounded-full">{fmt.format(new Date(event.start_time))}</span>
                 <h2 className="text-xl font-bold text-stone-900 mt-3">{event.title}</h2>
                 <p className="text-stone-600 text-sm">{event.location ?? 'Venue revealed after RSVP'}</p>
                 <p className="text-stone-700 text-sm mt-3">Booking: <strong>{reg.status}</strong> · {reg.party_size ?? 1} seat(s) · door phone {reg.ticket_phone ?? '—'}</p>
@@ -168,7 +169,7 @@ export default function TicketsPage() {
             </article>
           ))}
         </div>
-        <p className="text-xs text-stone-400 mt-8">Session lasts until you close this tab. <Todo>owner: email delivery of tickets</Todo></p>
+        <p className="text-xs text-stone-400 mt-8">Session lasts until you close this tab. Save or print your ticket before leaving.</p>
       </div>
     </main>
   );
