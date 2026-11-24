@@ -58,6 +58,10 @@ export default function EventsPage() {
           <span className="text-stone-500 font-medium tracking-widest uppercase text-sm">Nareli calendar</span>
           <h1 className="text-4xl md:text-5xl font-bold mt-2">All events</h1>
           <p className="text-stone-600 mt-2">Live from the ticketing service. Select an event to reserve a spot.</p>
+          <div className="mt-4 bg-stone-100 border border-stone-200 rounded-2xl px-5 py-4 text-sm text-stone-700 max-w-2xl">
+            <p className="font-semibold mb-1">New here?</p>
+            <p>Open an event, choose your party size, enter a phone number, then save or print the ticket you see. Need a hand? <Link href="/contact" className="underline font-medium">Contact us</Link>.</p>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-8">
