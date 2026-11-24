@@ -49,6 +49,7 @@ export default function OwnerPage() {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [capacity, setCapacity] = useState('');
+  const [price, setPrice] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [capacityDrafts, setCapacityDrafts] = useState<Record<string, string>>({});
   const [refundRefs, setRefundRefs] = useState<Record<string, string>>({});
@@ -193,11 +194,12 @@ export default function OwnerPage() {
                   const body = {
                     title: title.trim(), description: description.trim(), location: location.trim(),
                     start_time: new Date(start).toISOString(), end_time: new Date(end).toISOString(),
-                    capacity: capacity.trim() ? Number(capacity) : undefined, is_public: isPublic,
+                    capacity: capacity.trim() ? Number(capacity) : undefined,
+                    price_kes: price.trim() ? Number(price) : null, is_public: isPublic,
                   };
                   await createEvent(token, body);
                   await loadEvents(token);
-                  setTitle(''); setDescription(''); setLocation(''); setStart(''); setEnd(''); setCapacity('');
+                  setTitle(''); setDescription(''); setLocation(''); setStart(''); setEnd(''); setCapacity(''); setPrice('');
                 }, 'Event created.');
               }} className="grid sm:grid-cols-2 gap-4">
                 <input className={input} aria-label="Event title" placeholder="Event title" required value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -205,6 +207,7 @@ export default function OwnerPage() {
                 <input className={input} type="datetime-local" required value={start} onChange={(e) => setStart(e.target.value)} aria-label="Starts at" />
                 <input className={input} type="datetime-local" required value={end} onChange={(e) => setEnd(e.target.value)} aria-label="Ends at" />
                 <input className={input} aria-label="Capacity" placeholder="Capacity (blank = unlimited)" type="number" min="0" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                <input className={input} aria-label="Price in KSh" placeholder="Price in KSh (blank = not set)" type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} />
                 <label className="flex items-center gap-2 text-sm text-stone-700">
                   <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} /> Public listing (private events return 404 to guests)
                 </label>

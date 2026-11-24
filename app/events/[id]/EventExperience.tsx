@@ -210,7 +210,9 @@ export default function EventExperience({ id }: { id: string }) {
               <p className="text-stone-700">Open seating</p>
             )}
             <p className="mt-4 text-xs text-stone-600">
-              Ticket prices will be announced before sale. No payment is collected online yet.
+              {event.price_kes != null
+                ? `KSh ${event.price_kes.toLocaleString()} per seat. No payment is collected online yet.`
+                : "Ticket prices will be announced before sale. No payment is collected online yet."}
             </p>
           </section>
 

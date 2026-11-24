@@ -148,7 +148,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
-                  <p className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</p>
+                  <p className="text-xs uppercase tracking-widest text-stone-500">{event.price_kes != null ? `KSh ${event.price_kes.toLocaleString()}` : "Ticket prices announced soon"}</p>
                   <Link href={`/events/${event.id}`} className="bg-nareli text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-nareli-dark transition-colors w-full md:w-auto text-center">
                     {soldOut ? 'Join Waitlist' : 'Reserve'}
                   </Link>

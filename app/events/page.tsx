@@ -126,7 +126,7 @@ export default function EventsPage() {
                 <h2 className="text-xl font-bold text-stone-900 mb-1">{event.title}</h2>
                 <p className="text-stone-600 text-sm mb-4">{event.location ?? 'Venue revealed after RSVP'}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</span>
+                  <span className="text-xs uppercase tracking-widest text-stone-500">{event.price_kes != null ? `KSh ${event.price_kes.toLocaleString()}` : "Ticket prices announced soon"}</span>
                   <span className="text-stone-900 text-sm font-medium">{soldOut ? 'Join waitlist →' : 'Reserve →'}</span>
                 </div>
               </Link>
