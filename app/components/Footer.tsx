@@ -11,6 +11,7 @@ export default function Footer() {
           <Link href="/events" className="hover:text-white">Events</Link>
           <Link href="/experiences" className="hover:text-white">Packages</Link>
           <Link href="/notifications" className="hover:text-white">My messages</Link>
+          <Link href="/tickets" className="hover:text-white">My tickets</Link>
           <Link href="/contact" className="hover:text-white">Contact</Link>
           <Link href="/terms" className="hover:text-white">Privacy &amp; Refunds</Link>
         </nav>

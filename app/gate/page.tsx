@@ -3,8 +3,12 @@
 // /gate — staff-only door lookup. No link from anywhere public; auth is the lock,
 // this path is only not advertised. Staff see first names and counts — never
 // emails, other guests' phone numbers, or money fields.
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { apiConfigured, apiFetch } from '../lib/api';
+
+type BarcodeResult = { rawValue: string };
+type Detector = { detect: (source: HTMLVideoElement) => Promise<BarcodeResult[]> };
+type BarcodeDetectorCtor = new (options: { formats: string[] }) => Detector;
 
 type Match = {
   reg_id: string;
@@ -18,6 +22,7 @@ type Match = {
 type DoorResult = { event?: { id: string; title: string; start_time: string }; matches?: Match[] };
 
 const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500';
 
 export default function GatePage() {
   const [staffEmail, setStaffEmail] = useState('');
@@ -29,6 +34,15 @@ export default function GatePage() {
   const [result, setResult] = useState<DoorResult | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scanNotice, setScanNotice] = useState<string | null>(null);
+  const [manualToken, setManualToken] = useState('');
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const detectorRef = useRef<Detector | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const activeRef = useRef(false);
 
   const staffLogin = async () => {
     setStaffError(null);
@@ -102,6 +116,75 @@ export default function GatePage() {
     }
   };
 
+  const stopScan = () => {
+    activeRef.current = false;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    setScanning(false);
+  };
+
+  const redeemToken = async (raw: string) => {
+    if (!staffToken || !eventId) { setScanError('Choose an event before redeeming a QR.'); return; }
+    setBusy(true);
+    setScanError(null);
+    setScanNotice(null);
+    try {
+      const r = await apiFetch(`/api/events/${eventId}/checkin`, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${staffToken}` },
+        body: JSON.stringify({ token: raw }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error((j as { error?: string })?.error ?? 'QR check-in failed');
+      setScanNotice((j as { status?: string })?.status === 'already_checked_in' ? 'Already checked in.' : 'Checked in ✓');
+      setManualToken('');
+    } catch (e) {
+      setScanError(e instanceof Error ? e.message : 'QR check-in failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const scanTick = async () => {
+    const video = videoRef.current;
+    const detector = detectorRef.current;
+    if (!activeRef.current || !video || !detector) return;
+    try {
+      const codes = await detector.detect(video);
+      const code = codes.find((c) => c.rawValue);
+      if (code) { stopScan(); await redeemToken(code.rawValue); return; }
+    } catch { /* a frame failed — keep scanning */ }
+    rafRef.current = requestAnimationFrame(() => void scanTick());
+  };
+
+  const startScan = async () => {
+    setScanError(null);
+    setScanNotice(null);
+    const Ctor = (window as unknown as { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
+    if (!Ctor || !navigator.mediaDevices?.getUserMedia) {
+      setScanError('This browser cannot scan QR codes — use phone lookup or paste the token below.');
+      return;
+    }
+    if (!eventId) { setScanError('Choose an event before scanning.'); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      streamRef.current = stream;
+      const video = videoRef.current;
+      if (!video) { stopScan(); return; }
+      video.srcObject = stream;
+      await video.play();
+      detectorRef.current = new Ctor({ formats: ['qr_code'] });
+      activeRef.current = true;
+      setScanning(true);
+      void scanTick();
+    } catch {
+      setScanError('Camera unavailable — use phone lookup or paste the token below.');
+      stopScan();
+    }
+  };
+
   if (!apiConfigured) {
     return <main className="min-h-screen flex items-center justify-center text-stone-500 px-6 text-center">Door console is not configured yet — set NEXT_PUBLIC_API_URL.</main>;
   }
@@ -135,6 +218,21 @@ export default function GatePage() {
             {events.map((ev) => <option key={ev.id} value={ev.id}>{ev.title} — {new Intl.DateTimeFormat('en-KE', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Africa/Nairobi' }).format(new Date(ev.start_time))}</option>)}
           </select>
         )}
+
+        <section className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3">
+          <p className="font-semibold text-stone-900 text-sm">QR check-in</p>
+          <video ref={videoRef} playsInline muted className={`w-full rounded-xl bg-stone-900 ${scanning ? 'block' : 'hidden'}`} />
+          <button onClick={() => (scanning ? stopScan() : void startScan())} className={scanning ? ghost : 'w-full bg-stone-900 text-white py-3 rounded-2xl font-semibold'}>
+            {scanning ? 'Stop scanner' : 'Scan ticket QR'}
+          </button>
+          <div className="flex gap-2">
+            <input className={input} placeholder="…or paste check-in token" value={manualToken} onChange={(e) => setManualToken(e.target.value)} aria-label="Check-in token" />
+            <button onClick={() => void redeemToken(manualToken.trim())} disabled={busy || !manualToken.trim()} className="shrink-0 bg-stone-900 text-white px-4 rounded-xl text-sm disabled:opacity-50">Redeem</button>
+          </div>
+          {scanError && <p className="text-red-700 text-xs">{scanError}</p>}
+          {scanNotice && <p className="text-green-700 text-sm font-semibold">{scanNotice}</p>}
+          <p className="text-[11px] text-stone-400">First scan wins. The door also supports phone lookup below when a QR is unavailable.</p>
+        </section>
 
         <input className={input} inputMode="tel" placeholder="Phone number (e.g. 0712 345 678)" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && doLookup()} />
         <button onClick={doLookup} disabled={busy || !eventId || !phone.trim()} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">{busy ? 'Checking…' : 'Find booking'}</button>
