@@ -31,7 +31,7 @@ export default function ContactPage() {
       } else {
         alert('Something went wrong. Please try again.');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to send. Please check your connection.');
     } finally {
       setIsSubmitting(false);
@@ -68,18 +68,18 @@ export default function ContactPage() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-2">Name</label>
-                  <input name="name" type="text" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Jane Doe" />
+                  <label htmlFor="contact-name" className="block text-sm font-medium text-stone-700 mb-2">Name</label>
+                  <input id="contact-name" name="name" type="text" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Jane Doe" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-2">Email</label>
-                  <input name="email" type="email" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="jane@example.com" />
+                  <label htmlFor="contact-email" className="block text-sm font-medium text-stone-700 mb-2">Email</label>
+                  <input id="contact-email" name="email" type="email" required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="jane@example.com" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Event Type</label>
-                <select name="eventType" className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900">
+                <label htmlFor="contact-event" className="block text-sm font-medium text-stone-700 mb-2">Event Type</label>
+                <select id="contact-event" name="eventType" className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900">
                   <option>Luxury Picnic</option>
                   <option>Cozy Sleepover</option>
                   <option>Movie Night</option>
@@ -89,8 +89,8 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Tell us about your vision</label>
-                <textarea name="message" rows={4} required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Date, number of guests, location..."></textarea>
+                <label htmlFor="contact-message" className="block text-sm font-medium text-stone-700 mb-2">Tell us about your vision</label>
+                <textarea id="contact-message" name="message" rows={4} required className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400" placeholder="Date, number of guests, location..."></textarea>
               </div>
 
               <button type="submit" disabled={isSubmitting} className="w-full bg-nareli text-white py-4 rounded-full text-lg font-semibold hover:bg-nareli-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

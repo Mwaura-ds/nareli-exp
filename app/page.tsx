@@ -45,11 +45,6 @@ export default function Home() {
     },
   ];
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.15 } }
-  };
-
   const item = {
     hidden: { opacity: 0, y: 30 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
@@ -99,7 +94,7 @@ export default function Home() {
               </button>
             </a>
             <Link href="/contact">
-              <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300">
+              <button className="bg-nareli text-white border-2 border-nareli px-8 py-4 rounded-full text-lg font-semibold hover:bg-nareli-dark transition-all duration-300 shadow-lg">
                 Book a Private Event
               </button>
             </Link>
@@ -108,12 +103,8 @@ export default function Home() {
       </section>
 
       {/* Upcoming Public Events Section */}
-      <motion.section 
+      <section
         id="upcoming"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
         className="py-24 px-6 max-w-5xl mx-auto w-full"
       >
         <div className="text-center mb-16">
@@ -166,19 +157,13 @@ export default function Home() {
             );
           })}
         </div>
-      </motion.section>
+      </section>
 
       {/* Private Experiences Grid */}
-      <motion.section 
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.1 }}
-        className="py-24 px-6 bg-stone-100 w-full"
-      >
+      <section className="py-24 px-6 bg-stone-100 w-full">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-stone-500 font-medium tracking-widest uppercase text-sm">Just For You</span>
+            <span className="text-stone-600 font-medium tracking-widest uppercase text-sm">Just For You</span>
             <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">Private Bookings</h2>
             <p className="text-stone-600 text-lg max-w-2xl mx-auto">Want to host your own? We bring the magic to your location.</p>
           </div>
@@ -195,7 +180,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
     </main>
   );
 }

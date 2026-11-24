@@ -90,8 +90,8 @@ export default function NotificationsPage() {
             <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
             <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
           </div>
-          <input className={input} type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
-          <input className={input} type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
+          <input className={input} type="email" aria-label="Email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+          <input className={input} type="password" aria-label="Password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
           {authError && <p className="text-red-700 text-sm">{authError}</p>}
           <button onClick={signIn} disabled={busy || !email || password.length < 8} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">
             {busy ? 'Signing in…' : 'Continue'}
