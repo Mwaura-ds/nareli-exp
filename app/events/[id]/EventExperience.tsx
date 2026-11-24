@@ -111,6 +111,7 @@ export default function EventExperience({ id }: { id: string }) {
 
   const seatsLeft = event && event.capacity != null ? Math.max(0, event.capacity - event.current_registrations) : null;
   const soldOut = seatsLeft === 0;
+  const partyTooLarge = seatsLeft !== null && Number(partySize) > seatsLeft;
 
   if (loadError) {
     return (
@@ -162,7 +163,7 @@ export default function EventExperience({ id }: { id: string }) {
                 </h2>
                 <p className="text-stone-600 mb-4">
                   {result.status === 'waitlisted'
-                    ? `Position #${result.waitlist?.position ?? '—'}. We will reach out on ${phone.trim()} if a seat opens.`
+                    ? `Position #${result.waitlist?.position ?? '—'}. We will reach out on ${phone.trim()} if a seat opens. Your party of ${Number(partySize)} cannot be confirmed; ${seatsLeft ?? 'the remaining'} seat${seatsLeft === 1 ? '' : 's'} remain for smaller parties.`
                     : 'Show this QR (or your phone) at the door — your party enters together.'}
                 </p>
                 {result.checkin_token && result.status !== 'waitlisted' && (
@@ -177,10 +178,16 @@ export default function EventExperience({ id }: { id: string }) {
                   <p className="text-sm text-stone-600 mb-2">Party: {result.registration.attendee_names.join(', ')}</p>
                 ) : null}
                 <div className="flex gap-3 justify-center print:hidden">
-                  <button onClick={() => window.print()} className="bg-nareli text-white px-5 py-3 rounded-full font-medium hover:bg-nareli-dark">Print / Save ticket (PDF)</button>
+                  {result.status !== 'waitlisted' && (
+                    <button onClick={() => window.print()} className="bg-nareli text-white px-5 py-3 rounded-full font-medium hover:bg-nareli-dark">Print / Save ticket (PDF)</button>
+                  )}
                   <Link href="/" className="border border-stone-300 px-5 py-3 rounded-full font-medium hover:border-stone-500">Done</Link>
                 </div>
-                <p className="mt-4 text-[11px] text-stone-400 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
+                {result.status === 'waitlisted' ? (
+                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">No ticket has been issued yet — you will get a QR only if a seat opens for your party.</p>
+                ) : (
+                  <p className="mt-4 text-[11px] text-stone-400 print:hidden">Ticket is valid once scanned at the door; the seat count above updates live.</p>
+                )}
               </div>
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); void submit(); }} className="space-y-4">
@@ -210,6 +217,12 @@ export default function EventExperience({ id }: { id: string }) {
                     <input id="phone" required className={input} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. 0712 345 678" autoComplete="tel" />
                   </div>
                 </div>
+
+                {partyTooLarge && (
+                  <p className="text-xs text-amber-700">
+                    Only {seatsLeft} seat{seatsLeft === 1 ? '' : 's'} left — a party of {partySize} will be waitlisted, not confirmed.
+                  </p>
+                )}
 
                 {Number(partySize) > 1 && (
                   <div className="space-y-2">
