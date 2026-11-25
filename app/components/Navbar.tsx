@@ -10,6 +10,7 @@ export default function Navbar() {
   const links = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
+    { href: '/events', label: 'Events' },
     { href: '/experiences', label: 'Experiences' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/contact', label: 'Contact' },
@@ -34,7 +35,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger Button (Visible only on mobile) */}
         <button
-          className="md:hidden text-stone-900 focus:outline-none"
+          className="md:hidden text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nareli rounded-lg"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -61,7 +62,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             className="md:hidden bg-white border-b border-stone-200 overflow-hidden"
-          >s
+          >
             <div className="flex flex-col px-6 py-4 space-y-4">
               {links.map((link) => (
                 <Link

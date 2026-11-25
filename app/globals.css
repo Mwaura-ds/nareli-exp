@@ -19,12 +19,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Light-only brand site: page surfaces use stone/sand backgrounds, so the
+   text variables must stay dark even when the OS prefers dark mode. */
 
 body {
   background: var(--background);

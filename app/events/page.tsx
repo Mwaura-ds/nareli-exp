@@ -13,7 +13,7 @@ const STATUSES: { key: Status; label: string }[] = [
   { key: 'past', label: 'Past' },
 ];
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const dateFmt = new Intl.DateTimeFormat('en-KE', {
   weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi',
 });
@@ -58,6 +58,10 @@ export default function EventsPage() {
           <span className="text-stone-500 font-medium tracking-widest uppercase text-sm">Nareli calendar</span>
           <h1 className="text-4xl md:text-5xl font-bold mt-2">All events</h1>
           <p className="text-stone-600 mt-2">Live from the ticketing service. Select an event to reserve a spot.</p>
+          <div className="mt-4 bg-stone-100 border border-stone-200 rounded-2xl px-5 py-4 text-sm text-stone-700 max-w-2xl">
+            <p className="font-semibold mb-1">New here?</p>
+            <p>Open an event, choose your party size, enter a phone number, then save or print the ticket you see. Need a hand? <Link href="/contact" className="underline font-medium">Contact us</Link>.</p>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-8">
@@ -122,7 +126,7 @@ export default function EventsPage() {
                 <h2 className="text-xl font-bold text-stone-900 mb-1">{event.title}</h2>
                 <p className="text-stone-600 text-sm mb-4">{event.location ?? 'Venue revealed after RSVP'}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</span>
+                  <span className="text-xs uppercase tracking-widest text-stone-500">{event.price_kes != null ? `KSh ${event.price_kes.toLocaleString()}` : "Ticket prices announced soon"}</span>
                   <span className="text-stone-900 text-sm font-medium">{soldOut ? 'Join waitlist →' : 'Reserve →'}</span>
                 </div>
               </Link>

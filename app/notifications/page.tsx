@@ -10,7 +10,7 @@ import {
   getSessionToken, saveSessionToken, type Notification, type Pagination,
 } from '../lib/api';
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const fmt = new Intl.DateTimeFormat('en-KE', {
   day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Nairobi',
 });
@@ -90,13 +90,13 @@ export default function NotificationsPage() {
             <button type="button" onClick={() => setMode('login')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'login' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>Log in</button>
             <button type="button" onClick={() => setMode('register')} className={`px-3 py-1.5 rounded-full border font-medium ${mode === 'register' ? 'bg-nareli text-white border-stone-900' : 'border-stone-300 text-stone-600'}`}>New account</button>
           </div>
-          <input className={input} type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
-          <input className={input} type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
+          <input className={input} type="email" aria-label="Email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+          <input className={input} type="password" aria-label="Password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
           {authError && <p className="text-red-700 text-sm">{authError}</p>}
           <button onClick={signIn} disabled={busy || !email || password.length < 8} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">
             {busy ? 'Signing in…' : 'Continue'}
           </button>
-          <p className="text-xs text-stone-400">Messages appear here in your account. Email delivery is not available yet.</p>
+          <p className="text-xs text-stone-600">Messages appear here in your account. Email delivery is not available yet.</p>
         </div>
       </main>
     );
@@ -132,7 +132,7 @@ export default function NotificationsPage() {
                 </span>
               </div>
               <p className="text-stone-600 text-sm whitespace-pre-wrap">{n.body}</p>
-              <p className="text-xs text-stone-400 mt-2">{fmt.format(new Date(n.created_at))}</p>
+              <p className="text-xs text-stone-600 mt-2">{fmt.format(new Date(n.created_at))}</p>
             </article>
           ))}
         </div>

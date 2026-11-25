@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-nareli text-stone-400 py-12 mt-auto">
+    <footer className="bg-nareli text-stone-200 py-12 mt-auto">
       <div className="max-w-6xl mx-auto px-6 text-center">
         <h3 className="text-2xl font-bold text-white mb-4">Nareli Experience</h3>
         <p className="mb-6">Curating unforgettable moments, one event at a time.</p>

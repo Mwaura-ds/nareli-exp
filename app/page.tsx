@@ -12,6 +12,7 @@ type ApiEvent = {
   start_time: string;
   end_time: string;
   capacity: number | null;
+  price_kes: number | null;
   current_registrations: number;
 };
 
@@ -44,11 +45,6 @@ export default function Home() {
       description: "Full aesthetic styling, lighting design, and seamless setup/teardown for up to 20 guests."
     },
   ];
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.15 } }
-  };
 
   const item = {
     hidden: { opacity: 0, y: 30 },
@@ -99,7 +95,7 @@ export default function Home() {
               </button>
             </a>
             <Link href="/contact">
-              <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300">
+              <button className="bg-nareli text-white border-2 border-nareli px-8 py-4 rounded-full text-lg font-semibold hover:bg-nareli-dark transition-all duration-300 shadow-lg">
                 Book a Private Event
               </button>
             </Link>
@@ -108,12 +104,8 @@ export default function Home() {
       </section>
 
       {/* Upcoming Public Events Section */}
-      <motion.section 
+      <section
         id="upcoming"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
         className="py-24 px-6 max-w-5xl mx-auto w-full"
       >
         <div className="text-center mb-16">
@@ -157,7 +149,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 w-full md:w-auto">
-                  <p className="text-xs uppercase tracking-widest text-stone-500">Ticket prices announced soon</p>
+                  <p className="text-xs uppercase tracking-widest text-stone-500">{event.price_kes != null ? `KSh ${event.price_kes.toLocaleString()}` : "Ticket prices announced soon"}</p>
                   <Link href={`/events/${event.id}`} className="bg-nareli text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-nareli-dark transition-colors w-full md:w-auto text-center">
                     {soldOut ? 'Join Waitlist' : 'Reserve'}
                   </Link>
@@ -166,19 +158,13 @@ export default function Home() {
             );
           })}
         </div>
-      </motion.section>
+      </section>
 
       {/* Private Experiences Grid */}
-      <motion.section 
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.1 }}
-        className="py-24 px-6 bg-stone-100 w-full"
-      >
+      <section className="py-24 px-6 bg-stone-100 w-full">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-stone-500 font-medium tracking-widest uppercase text-sm">Just For You</span>
+            <span className="text-stone-600 font-medium tracking-widest uppercase text-sm">Just For You</span>
             <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">Private Bookings</h2>
             <p className="text-stone-600 text-lg max-w-2xl mx-auto">Want to host your own? We bring the magic to your location.</p>
           </div>
@@ -195,7 +181,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
     </main>
   );
 }

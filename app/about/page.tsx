@@ -18,11 +18,6 @@ export default function AboutPage() {
     return () => clearInterval(interval); // Cleanup to prevent memory leaks
   }, []);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.2 } }
-  };
-
   const item = {
     hidden: { opacity: 0, y: 30 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
@@ -46,13 +41,7 @@ export default function AboutPage() {
       </section>
 
       {/* The Mission Section with Slideshow */}
-      <motion.section 
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-        className="py-24 px-6 max-w-6xl mx-auto"
-      >
+      <section className="py-24 px-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           
           {/* THE AUTOMATIC SLIDESHOW */}
@@ -81,19 +70,13 @@ export default function AboutPage() {
             </p>
           </motion.div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Contact Information Section */}
-      <motion.section 
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-        className="py-24 px-6 bg-nareli text-white"
-      >
+      <section className="py-24 px-6 bg-nareli text-white">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2 variants={item} className="text-4xl font-bold mb-4">Get in Touch</motion.h2>
-          <motion.p variants={item} className="text-stone-400 mb-16 text-lg">Ready to plan your next event? Reach out to us directly.</motion.p>
+          <motion.p variants={item} className="text-stone-200 mb-16 text-lg">Ready to plan your next event? Reach out to us directly.</motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div variants={item} className="bg-stone-800 p-8 rounded-2xl hover:bg-nareli-dark transition-colors">
@@ -122,13 +105,13 @@ export default function AboutPage() {
               <p className="text-stone-400 text-sm mb-2">See our latest setups</p>
               <div className="flex justify-center gap-4 text-white font-medium">
                 <a href="https://www.instagram.com/nareliexperience?dlrf=MWpweDNhemJwd3hjNw==" className="hover:text-amber-400 transition-colors">Instagram</a>
-                <span className="text-stone-600">|</span>
-                <a href="#" className="hover:text-amber-400 transition-colors">TikTok</a>
+                <span className="text-stone-400">|</span>
+                <span className="text-stone-400">TikTok — coming soon</span>
               </div>
             </motion.div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Final Call to Action */}
       <section className="py-24 px-6 text-center">

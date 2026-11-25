@@ -21,7 +21,7 @@ type Match = {
 };
 type DoorResult = { event?: { id: string; title: string; start_time: string }; matches?: Match[] };
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-base outline-none focus:border-stone-500 placeholder:text-stone-500';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500';
 
 export default function GatePage() {
@@ -194,11 +194,11 @@ export default function GatePage() {
       <main className="min-h-screen bg-stone-50 flex items-center justify-center px-6">
         <div className="max-w-sm w-full bg-white rounded-3xl border border-stone-100 shadow-sm p-6 space-y-4">
           <h1 className="text-xl font-bold text-stone-900">Door — staff sign in</h1>
-          <input className={input} type="email" placeholder="Staff email" value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} autoComplete="username" />
-          <input className={input} type="password" placeholder="Password" value={staffPassword} onChange={(e) => setStaffPassword(e.target.value)} autoComplete="current-password" />
+          <input className={input} type="email" aria-label="Staff email" placeholder="Staff email" value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} autoComplete="username" />
+          <input className={input} type="password" aria-label="Password" placeholder="Password" value={staffPassword} onChange={(e) => setStaffPassword(e.target.value)} autoComplete="current-password" />
           {staffError && <p className="text-red-700 text-sm">{staffError}</p>}
           <button onClick={staffLogin} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold hover:bg-nareli-dark">Sign in</button>
-          <p className="text-[11px] text-stone-400">Staff sessions are seat-level: gate staff see first names and counts only.</p>
+          <p className="text-[11px] text-stone-600">Staff sessions are seat-level: gate staff see first names and counts only.</p>
         </div>
       </main>
     );
@@ -213,7 +213,7 @@ export default function GatePage() {
           <button onClick={loadEvents} className="w-full border border-stone-300 py-3 rounded-2xl font-medium hover:border-stone-500">Load today&apos;s events</button>
         )}
         {eventsLoaded && (
-          <select className={input} value={eventId} onChange={(e) => setEventId(e.target.value)}>
+          <select className={input} aria-label="Choose event" value={eventId} onChange={(e) => setEventId(e.target.value)}>
             <option value="">Choose the event…</option>
             {events.map((ev) => <option key={ev.id} value={ev.id}>{ev.title} — {new Intl.DateTimeFormat('en-KE', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Africa/Nairobi' }).format(new Date(ev.start_time))}</option>)}
           </select>
@@ -222,19 +222,19 @@ export default function GatePage() {
         <section className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3">
           <p className="font-semibold text-stone-900 text-sm">QR check-in</p>
           <video ref={videoRef} playsInline muted className={`w-full rounded-xl bg-stone-900 ${scanning ? 'block' : 'hidden'}`} />
-          <button onClick={() => (scanning ? stopScan() : void startScan())} className={scanning ? ghost : 'w-full bg-stone-900 text-white py-3 rounded-2xl font-semibold'}>
+          <button onClick={() => (scanning ? stopScan() : void startScan())} className={scanning ? ghost : 'w-full bg-nareli text-white py-3 rounded-2xl font-semibold hover:bg-nareli-dark'}>
             {scanning ? 'Stop scanner' : 'Scan ticket QR'}
           </button>
           <div className="flex gap-2">
             <input className={input} placeholder="…or paste check-in token" value={manualToken} onChange={(e) => setManualToken(e.target.value)} aria-label="Check-in token" />
-            <button onClick={() => void redeemToken(manualToken.trim())} disabled={busy || !manualToken.trim()} className="shrink-0 bg-stone-900 text-white px-4 rounded-xl text-sm disabled:opacity-50">Redeem</button>
+            <button onClick={() => void redeemToken(manualToken.trim())} disabled={busy || !manualToken.trim()} className="shrink-0 bg-nareli text-white px-4 rounded-xl text-sm hover:bg-nareli-dark disabled:opacity-50">Redeem</button>
           </div>
           {scanError && <p className="text-red-700 text-xs">{scanError}</p>}
           {scanNotice && <p className="text-green-700 text-sm font-semibold">{scanNotice}</p>}
-          <p className="text-[11px] text-stone-400">First scan wins. The door also supports phone lookup below when a QR is unavailable.</p>
+          <p className="text-[11px] text-stone-600">First scan wins. The door also supports phone lookup below when a QR is unavailable.</p>
         </section>
 
-        <input className={input} inputMode="tel" placeholder="Phone number (e.g. 0712 345 678)" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && doLookup()} />
+        <input className={input} inputMode="tel" aria-label="Phone number" placeholder="Phone number (e.g. 0712 345 678)" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && doLookup()} />
         <button onClick={doLookup} disabled={busy || !eventId || !phone.trim()} className="w-full bg-nareli text-white py-3 rounded-2xl font-semibold disabled:opacity-50">{busy ? 'Checking…' : 'Find booking'}</button>
         {lookupError && <p className="text-red-700 text-sm">{lookupError}</p>}
 

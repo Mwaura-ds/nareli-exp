@@ -17,7 +17,7 @@ import Todo from '../components/Todo';
 type OwnerEvent = ApiEvent & { is_public: boolean; cancelled_at?: string | null };
 type Tab = 'events' | 'registrations' | 'staff' | 'accounts';
 
-const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-400';
+const input = 'w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 placeholder:text-stone-500';
 const btn = 'bg-nareli text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-nareli-dark disabled:opacity-50';
 const ghost = 'border border-stone-300 px-4 py-2 rounded-full text-sm font-medium hover:border-stone-500 disabled:opacity-50';
 const fmtKes = (n: number | null | undefined) => `KSh ${Number(n ?? 0).toLocaleString('en-KE')}`;
@@ -49,6 +49,7 @@ export default function OwnerPage() {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [capacity, setCapacity] = useState('');
+  const [price, setPrice] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [capacityDrafts, setCapacityDrafts] = useState<Record<string, string>>({});
   const [refundRefs, setRefundRefs] = useState<Record<string, string>>({});
@@ -145,11 +146,11 @@ export default function OwnerPage() {
           <Link href="/" className="text-stone-500 text-sm">← Back home</Link>
           <h1 className="text-2xl font-bold text-stone-900">Owner console</h1>
           <p className="text-stone-600 text-sm">Private. Owner credentials only — gate staff use the separate door console.</p>
-          <input className={input} type="email" placeholder="Owner email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" />
-          <input className={input} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+          <input className={input} type="email" aria-label="Owner email" placeholder="Owner email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" />
+          <input className={input} type="password" aria-label="Password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
           {authError && <p className="text-red-700 text-sm">{authError}</p>}
           <button onClick={signIn} disabled={busy || !email || !password} className={`${btn} w-full`}>{busy ? 'Signing in…' : 'Sign in'}</button>
-          <p className="text-[11px] text-stone-400">Session is held in this tab only; closing it signs you out.</p>
+          <p className="text-[11px] text-stone-600">Session is held in this tab only; closing it signs you out.</p>
         </div>
       </main>
     );
@@ -193,22 +194,24 @@ export default function OwnerPage() {
                   const body = {
                     title: title.trim(), description: description.trim(), location: location.trim(),
                     start_time: new Date(start).toISOString(), end_time: new Date(end).toISOString(),
-                    capacity: capacity.trim() ? Number(capacity) : undefined, is_public: isPublic,
+                    capacity: capacity.trim() ? Number(capacity) : undefined,
+                    price_kes: price.trim() ? Number(price) : null, is_public: isPublic,
                   };
                   await createEvent(token, body);
                   await loadEvents(token);
-                  setTitle(''); setDescription(''); setLocation(''); setStart(''); setEnd(''); setCapacity('');
+                  setTitle(''); setDescription(''); setLocation(''); setStart(''); setEnd(''); setCapacity(''); setPrice('');
                 }, 'Event created.');
               }} className="grid sm:grid-cols-2 gap-4">
-                <input className={input} placeholder="Event title" required value={title} onChange={(e) => setTitle(e.target.value)} />
-                <input className={input} placeholder="Location (optional)" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <input className={input} aria-label="Event title" placeholder="Event title" required value={title} onChange={(e) => setTitle(e.target.value)} />
+                <input className={input} aria-label="Location" placeholder="Location (optional)" value={location} onChange={(e) => setLocation(e.target.value)} />
                 <input className={input} type="datetime-local" required value={start} onChange={(e) => setStart(e.target.value)} aria-label="Starts at" />
                 <input className={input} type="datetime-local" required value={end} onChange={(e) => setEnd(e.target.value)} aria-label="Ends at" />
-                <input className={input} placeholder="Capacity (blank = unlimited)" type="number" min="0" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                <input className={input} aria-label="Capacity" placeholder="Capacity (blank = unlimited)" type="number" min="0" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                <input className={input} aria-label="Price in KSh" placeholder="Price in KSh (blank = not set)" type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} />
                 <label className="flex items-center gap-2 text-sm text-stone-700">
                   <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} /> Public listing (private events return 404 to guests)
                 </label>
-                <textarea className={`${input} sm:col-span-2`} rows={2} placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
+                <textarea className={`${input} sm:col-span-2`} rows={2} aria-label="Description" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
                 <button type="submit" disabled={busy} className={`${btn} sm:col-span-2 justify-self-start`}>Create event</button>
               </form>
             </section>
@@ -382,7 +385,7 @@ export default function OwnerPage() {
                   setStaffEmail(''); setStaffPassword(''); setStaffName('');
                 }, 'Staff account created — hand the password over out-of-band.');
               }} className="grid sm:grid-cols-2 gap-4">
-                <input className={input} type="email" placeholder="Staff email" required value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} />
+                <input className={input} type="email" aria-label="Staff email" placeholder="Staff email" required value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} />
                 <input className={input} placeholder="Display name (optional)" value={staffName} onChange={(e) => setStaffName(e.target.value)} />
                 <input className={input} type="password" placeholder="Temporary password (8+ chars)" minLength={8} required value={staffPassword} onChange={(e) => setStaffPassword(e.target.value)} />
                 <button className={`${btn} justify-self-start`} disabled={busy}>Create staff</button>
