@@ -14,5 +14,7 @@ jobs:
         with:
           node-version: '22'
           cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
       - name: Verify
         run: bash scripts/verify.sh
