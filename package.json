@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "verify": "bash scripts/verify.sh"
   },
+  "packageManager": "pnpm@10.34.5",
   "dependencies": {
     "framer-motion": "^14.10.1",
     "next": "16.4.5",
