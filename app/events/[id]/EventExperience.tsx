@@ -21,7 +21,6 @@ type ApiEvent = {
   capacity: number | null;
   price_kes: number | null;
   current_registrations: number;
-  price_kes?: number | null;
 };
 
 type RegistrationResult = {
