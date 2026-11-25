@@ -12,6 +12,7 @@ type ApiEvent = {
   start_time: string;
   end_time: string;
   capacity: number | null;
+  price_kes: number | null;
   current_registrations: number;
 };
 
