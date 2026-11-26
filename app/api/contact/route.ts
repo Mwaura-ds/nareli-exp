@@ -14,14 +14,25 @@ const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 5;
 const hits = new Map<string, { count: number; resetAt: number }>();
 
+// Never key the limiter on a header the caller controls. Deployments name the
+// platform-injected IP header explicitly (cf-connecting-ip on Cloudflare,
+// x-real-ip on Vercel). With nothing configured every caller shares one bucket:
+// conservative, but impossible to bypass by inventing header values.
+const TRUSTED_IP_HEADER = process.env.TRUSTED_IP_HEADER?.trim().toLowerCase();
+
+function rateLimitKey(request: Request): string {
+  const value = TRUSTED_IP_HEADER ? request.headers.get(TRUSTED_IP_HEADER) : null;
+  return value?.trim() || 'shared';
+}
+
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 const asStr = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export async function POST(request: Request) {
-  // Crude per-IP rate limiting (best effort; platform-level limits still apply)
-  const ip = (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
+  // Rate-limit key comes only from a deployment-configured trusted header.
+  const ip = rateLimitKey(request);
   const now = Date.now();
   const slot = hits.get(ip);
   if (slot && now < slot.resetAt) {

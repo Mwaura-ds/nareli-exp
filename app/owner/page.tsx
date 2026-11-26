@@ -101,7 +101,7 @@ export default function OwnerPage() {
       const role = me.user.role;
       const allowed = ['admin', 'owner', 'finance', 'content'];
       if (!allowed.includes(role)) {
-        setAuthError('This account has no management access. Door staff sign in at /gate.');
+        setAuthError('This account has no management access.');
         return;
       }
       setToken(res.token);
